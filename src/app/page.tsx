@@ -1,10 +1,13 @@
 "use client"
 import { products } from "@/lib/products"
-import ProductCard from "@/components/ProductCard"
+import CategorySection from "@/components/CategorySection"
+import CartDrawer from "@/components/CartDrawer"
 import { useCart } from "@/hooks/useCart"
+import { useState } from "react"
 
 export default function Home() {
   const { cart, addToCart, removeFromCart, total } = useCart()
+  const [isCartOpen, setCartOpen] = useState(false)
 
   const handleFinish = () => {
     const message = encodeURIComponent(
@@ -16,25 +19,47 @@ export default function Home() {
   }
 
   return (
-    <main className="max-w-5xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">🍱 Cardápio</h1>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {products.map(p => (
-          <ProductCard key={p.id} product={p} onAdd={addToCart} />
-        ))}
+    <main className="max-w-5xl mx-auto py-8 px-4 flex flex-col items-center">
+      {/* 🔥 Logo centralizada */}
+      <div className="w-36 h-36 rounded-full overflow-hidden mb-6 shadow-lg">
+        <img
+          src="/logo_melina.jpg"
+          alt="Logo Sushi"
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      {cart.length > 0 && (
-        <div className="fixed bottom-4 left-0 right-0 flex justify-center">
-          <button
-            className="bg-green-600 text-white px-8 py-3 rounded-full shadow-lg text-lg"
-            onClick={handleFinish}
-          >
-            Finalizar Pedido ({cart.length}) – R$ {total.toFixed(2)}
-          </button>
-        </div>
-      )}
+      <h1 className="text-3xl font-bold mb-6 text-center text-[#a89050]">
+        🍱 Cardápio Delivery
+      </h1>
+      <CategorySection
+        title="Pratos Quentes 🔥"
+        products={products.filter(p => p.category === "Pratos Quentes")}
+        onAdd={addToCart}
+      />
+      <CategorySection
+        title="Pratos Crus"
+        products={products.filter(p => p.category === "Pratos Crus")}
+        onAdd={addToCart}
+      />
+
+      {/* 🔥 ID importante pro efeito funcionar */}
+      <button
+        id="cart-button"
+        onClick={() => setCartOpen(true)}
+        className="fixed bottom-5 right-5 bg-[#a89050] text-white px-5 py-3 rounded-full shadow-lg text-lg hover:opacity-90 transition-transform transform hover:scale-105"
+      >
+        🛒 ({cart.length})
+      </button>
+
+      <CartDrawer
+        cart={cart}
+        total={total}
+        onRemove={removeFromCart}
+        onFinish={handleFinish}
+        isOpen={isCartOpen}
+        toggle={() => setCartOpen(false)}
+      />
     </main>
   )
 }

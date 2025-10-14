@@ -15,6 +15,11 @@ const robotoMono = Roboto_Mono({
 export const metadata: Metadata = {
   title: "Sushi Melina 🍣",
   description: "Delivery artesanal de sushi com amor e sabor.",
+  icons: {
+    icon: "/favicon.ico", // 👈 arquivo salvo em /public/favicon.ico
+    shortcut: "/favicon.ico", // opcional, ajuda navegadores antigos
+    apple: "/apple-touch-icon.png", // 👈 opcional (caso queira ícone no iPhone)
+  },
 };
 
 export default function RootLayout({
