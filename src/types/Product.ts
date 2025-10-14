@@ -4,5 +4,10 @@ export type Product = {
   description: string
   price: number
   image: string
-  category: "Pratos Quentes" | "Pratos Crus"
+  category: "Pratos Quentes" | "Pratos Crus" | "Combos"
+  options?: {
+    id?: number
+    name: string
+    price: number
+  }[]
 }

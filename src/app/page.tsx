@@ -15,7 +15,8 @@ export default function Home() {
         .map(p => `• ${p.name} - R$ ${p.price.toFixed(2)}`)
         .join("\n")}\n\n*Total:* R$ ${total.toFixed(2)}`
     )
-    window.open(`https://wa.me/5581999999999?text=${message}`, "_blank")
+    window.open(`https://wa.me/5511988536110?text=${message}`, "_blank")
+
   }
 
   return (
@@ -30,7 +31,7 @@ export default function Home() {
       </div>
 
       <h1 className="text-3xl font-bold mb-6 text-center text-[#a89050]">
-        🍱 Cardápio Delivery
+        Cardápio
       </h1>
       <CategorySection
         title="Pratos Quentes 🔥"
@@ -40,6 +41,11 @@ export default function Home() {
       <CategorySection
         title="Pratos Crus"
         products={products.filter(p => p.category === "Pratos Crus")}
+        onAdd={addToCart}
+      />
+      <CategorySection
+        title="Monte seu Combo 🍱"
+        products={products.filter(p => p.category === "Combos")}
         onAdd={addToCart}
       />
 
