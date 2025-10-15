@@ -6,6 +6,7 @@ import ComboModal from "@/components/ComboModal"
 import { Product } from "@/types/Product"
 import { useCart } from "@/context/CartContext"
 import { useState, useEffect } from "react"
+import Footer from "@/components/Footer"
 
 export default function Home() {
   const { cart, addToCart, removeFromCart, total } = useCart()
@@ -15,9 +16,15 @@ export default function Home() {
   // 🕒 Status de funcionamento (opcional)
   const isOpen = (() => {
     const now = new Date()
+    const day = now.getDay() // 0 = domingo, 1 = segunda, ... 6 = sábado
     const hour = now.getHours()
-    return hour >= 18 && hour < 23 // aberto das 18h às 23h
+
+    const diasPermitidos = [3, 4, 5, 6] // quarta (3), quinta (4), sexta (5), sábado (6)
+    const horarioAberto = hour >= 19 && hour < 23
+
+    return diasPermitidos.includes(day) && horarioAberto
   })()
+
 
   // 🧩 Escuta o evento do botão “Montar Combo 🍱”
   useEffect(() => {
@@ -27,7 +34,7 @@ export default function Home() {
   }, [])
 
   // ⚙️ Enviar pedido com verificação de valor mínimo
-  const handleFinish = () => {
+  const handleFinish = (address: string, paymentMethod: string) => {
     if (total < 14.99) {
       alert("⚠️ O pedido mínimo é de R$ 14,99.")
       return
@@ -39,7 +46,7 @@ export default function Home() {
           p =>
             `• ${p.name}${p.description ? `\n  ${p.description}` : ""}\n  ${p.quantity}x R$ ${(p.price * p.quantity).toFixed(2)}`
         )
-        .join("\n\n")}\n\n*Total:* R$ ${total.toFixed(2)}`
+        .join("\n\n")}\n\n*Total:* R$ ${total.toFixed(2)}\n\n🏠 *Endereço:* ${address}\n💳 *Pagamento:* ${paymentMethod}`
     )
 
     window.open(`https://wa.me/5511988536110?text=${message}`, "_blank")
@@ -50,12 +57,12 @@ export default function Home() {
       {/* 🧧 Cabeçalho com banner, logo e status */}
       <header className="w-full mb-8 relative">
         {/* 📸 Banner */}
-        <div className="relative h-48 w-full">
+        <div className="relative w-full h-48 md:h-72 lg:h-80">
           <img
             src="/banner.png"
             alt="Banner Melina Sushi"
             className="w-full h-full object-cover"
-            
+
           />
 
           {/* 🟢 / 🔴 Status */}
@@ -185,6 +192,7 @@ export default function Home() {
           />
         )}
       </main>
+      <Footer />
     </>
   )
 }

@@ -52,7 +52,7 @@ export const products: Product[] = [
     {
         id: 7,
         name: "Niguiri Salmão",
-        description: "8 unidades com salmão e arroz.",
+        description: "6 unidades com salmão e arroz.",
         price: 19.99,
         image: "/nigiri.jpeg",
         category: "Pratos Crus",
@@ -76,6 +76,17 @@ export const products: Product[] = [
         image: "/combinado.jpeg",
         category: "Pratos Crus",
     },
+     {
+        id: 10,
+        name: "Sunomono 150g",
+        description: "Pepino ralado molho e gergelim",
+        price: 9.99,
+        image: "/sunomono.jpg",
+        category: "Pratos Crus",
+    },
+
+
+    
     {
         id: 99,
         name: "Monte seu Combo",
@@ -84,10 +95,10 @@ export const products: Product[] = [
         image: "/sashimi.jpg",
         category: "Combos",
         options: [
-            { id: 1, name: "Sashimi", price: 3.12 },
-            { id: 2, name: "Jô", price: 2.87 },
+            { id: 1, name: "Sashimi", price: 2.78 },
+            { id: 2, name: "Jô", price: 2.88 },
             { id: 3, name: "Uramaki Filadélfia", price: 2.50 },
-            { id: 4, name: "Hossomaki", price: 2.48 },
+            { id: 4, name: "Hossomaki", price: 1.77 },
             { id: 5, name: "Nigiri Salmão", price: 2.49 },
         ],
     }
