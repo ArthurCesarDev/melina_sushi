@@ -45,12 +45,12 @@ export const products: Product[] = [
         id: 6,
         name: " Nigiri Jô ",
         description: "8 unidades com salmão, cream cheese, arroz e cebolinha.",
-        price: 19.99,
+        price: 22.99,
         image: "/jo.jpeg",
         category: "Pratos Crus",
     },
     {
-        id: 6,
+        id: 7,
         name: "Niguiri Salmão",
         description: "8 unidades com salmão e arroz.",
         price: 19.99,
@@ -58,7 +58,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 7,
+        id: 8,
         name: "Sashimi Salmão",
         description: "9 unidades de salmão",
         price: 24.99,
@@ -67,7 +67,7 @@ export const products: Product[] = [
     },
 
     {
-        id: 6,
+        id: 9,
         name: "Combinado de Salmão",
         description: "12 fatias de salmão fresco cortadas na hora.  1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak "
 
@@ -84,12 +84,11 @@ export const products: Product[] = [
         image: "/sashimi.jpg",
         category: "Combos",
         options: [
-            { id: 1, name: "Sashimi", price: 2.99 },
-            { id: 2, name: "Jô", price: 2.99 },
-            { id: 3, name: "Temaki Philadelphia 70g", price: 9.99 },
-            { id: 4, name: "Uramaki ", price: 2.99 },
-            { id: 5, name: "Hossomak", price: 2.99 },
-            { id: 6, name: "Niguiri Salmão", price: 3.99 },
+            { id: 1, name: "Sashimi", price: 3.12 },
+            { id: 2, name: "Jô", price: 2.87 },
+            { id: 3, name: "Uramaki Filadélfia", price: 2.50 },
+            { id: 4, name: "Hossomaki", price: 2.48 },
+            { id: 5, name: "Nigiri Salmão", price: 2.49 },
         ],
     }
 

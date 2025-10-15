@@ -1,117 +1,114 @@
 "use client"
-import { useState } from "react"
+import Image from "next/image"
 import { Product } from "@/types/Product"
-import ComboModal from "./ComboModal"
+import { motion } from "framer-motion"
+import { useCart } from "@/context/CartContext"
+import { useFlyToCart } from "@/hooks/useFlyToCart"
 
 type Props = {
   product: Product
   onAdd: (product: Product) => void
 }
 
-export default function ProductCard({ product, onAdd }: Props) {
-  const [open, setOpen] = useState(false)
+export default function ProductCard({ product }: Props) {
+  const { cart, addToCart, decreaseFromCart } = useCart()
+  const { fly } = useFlyToCart()
 
-  const handleConfirm = (selectedItems: { name: string; price: number; quantity: number }[]) => {
-    // 🎯 Efeito só quando confirma o combo
-    const cart = document.getElementById("cart-button")
-    const img = document.querySelector(`img[alt='${product.name}']`)
+  const itemInCart = cart.find(p => p.id === product.id)
+  const quantity = itemInCart?.quantity ?? 0
 
-    if (img && cart) {
-      const imgClone = img.cloneNode(true) as HTMLElement
-      const rect = img.getBoundingClientRect()
-      imgClone.style.position = "fixed"
-      imgClone.style.left = `${rect.left}px`
-      imgClone.style.top = `${rect.top}px`
-      imgClone.style.width = `${rect.width}px`
-      imgClone.style.height = `${rect.height}px`
-      imgClone.style.transition = "all 0.8s ease-in-out"
-      imgClone.style.zIndex = "1000"
-      document.body.appendChild(imgClone)
+  const handleAdd = (e: React.MouseEvent) => {
+    // encontra o card inteiro
+    const card = (e.currentTarget as HTMLElement).closest(".product-card")
+    const img = card?.querySelector("img") as HTMLImageElement | null
+    const cartBtn = document.getElementById("cart-button")
 
-      const cartRect = cart.getBoundingClientRect()
-      requestAnimationFrame(() => {
-        imgClone.style.left = `${cartRect.left + cartRect.width / 2 - rect.width / 4}px`
-        imgClone.style.top = `${cartRect.top + cartRect.height / 2 - rect.height / 4}px`
-        imgClone.style.width = "40px"
-        imgClone.style.height = "40px"
-        imgClone.style.opacity = "0.3"
-      })
-
-      setTimeout(() => imgClone.remove(), 800)
+    if (img && cartBtn) {
+      fly(img, cartBtn)
     }
 
-    // 🧾 Soma e adiciona o combo no carrinho
-    const totalPrice = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
-    const comboProduct: Product = {
-      ...product,
-      name: `Combo Personalizado (${selectedItems
-        .map(i => `${i.quantity}x ${i.name}`)
-        .join(", ")})`,
-      price: totalPrice,
-      description: `${selectedItems.length} itens escolhidos`,
-    }
-    onAdd(comboProduct)
-    setOpen(false)
+    addToCart(product)
   }
+
   return (
-    <div className="border rounded-lg p-4 shadow-sm bg-white">
-      <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-md" />
-      <h2 className="text-lg font-bold mt-2">{product.name}</h2>
-      <p className="text-sm text-gray-600">{product.description}</p>
-
-      {product.price > 0 && (
-        <p className="font-semibold mt-1 text-[#a89050]">R$ {product.price.toFixed(2)}</p>
-      )}
-
-      <button
-        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-          if (product.options) {
-            setOpen(true)
-          } else {
-            const img = (e.currentTarget.parentNode as HTMLElement).querySelector("img")
-            const cart = document.getElementById("cart-button")
-
-            if (img && cart) {
-              const imgClone = img.cloneNode(true) as HTMLElement
-              const rect = img.getBoundingClientRect()
-              imgClone.style.position = "fixed"
-              imgClone.style.left = `${rect.left}px`
-              imgClone.style.top = `${rect.top}px`
-              imgClone.style.width = `${rect.width}px`
-              imgClone.style.height = `${rect.height}px`
-              imgClone.style.transition = "all 0.8s ease-in-out"
-              imgClone.style.zIndex = "1000"
-              document.body.appendChild(imgClone)
-
-              const cartRect = cart.getBoundingClientRect()
-              requestAnimationFrame(() => {
-                imgClone.style.left = `${cartRect.left + cartRect.width / 2 - rect.width / 4}px`
-                imgClone.style.top = `${cartRect.top + cartRect.height / 2 - rect.height / 4}px`
-                imgClone.style.width = "40px"
-                imgClone.style.height = "40px"
-                imgClone.style.opacity = "0.3"
-              })
-
-              setTimeout(() => imgClone.remove(), 800)
-            }
-
-            onAdd(product)
-          }
-        }}
-        className="mt-4 w-full bg-[#a89050] text-white py-2 rounded-lg hover:bg-[#917c3f] transition"
-      >
-        {product.options ? "Montar Combo" : "Adicionar"}
-      </button>
-
-
-
-      {open && (
-        <ComboModal
-          combo={product}
-          onConfirm={handleConfirm}
-          onClose={() => setOpen(false)}
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="product-card rounded-2xl shadow-lg p-4 bg-white flex flex-col justify-between h-[400px] dark:bg-[#1a1a1a] transition"
+    >
+      {/* 🖼️ Imagem */}
+      <div className="w-full h-48 rounded-xl overflow-hidden flex items-center justify-center">
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={220}
+          height={220}
+          className="object-cover w-full h-full"
         />
-      )}
-    </div>
+      </div>
+
+      {/* 📜 Texto */}
+      <div className="flex flex-col flex-grow justify-between mt-3 text-center">
+        <div>
+          <h3 className="font-semibold text-lg">{product.name}</h3>
+          <p className="text-sm text-gray-500">{product.description}</p>
+        </div>
+
+        {/* 💰 Preço + Botão */}
+        <div className="mt-3">
+          {product.category !== "Combos" && product.price !== undefined && (
+            <span className="block text-[#a89050] font-bold mb-2">
+              R$ {product.price.toFixed(2)}
+            </span>
+          )}
+
+          {/* Se for um combo → abre modal */}
+          {product.category === "Combos" ? (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                const event = new CustomEvent("open-combo-modal", { detail: product })
+                window.dispatchEvent(event)
+              }}
+              className="bg-[#a89050] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90 w-full dark:bg-[#d4b660] dark:text-[#0a0a0a] dark:hover:bg-[#c4a840]"
+            >
+              Montar Combo 🍱
+            </motion.button>
+          ) : quantity === 0 ? (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              className="bg-[#a89050] text-white px-4 py-2 rounded-full shadow-md hover:opacity-90 w-full dark:bg-[#d4b660] dark:text-[#0a0a0a] dark:hover:bg-[#c4a840]"
+              onClick={handleAdd}
+            >
+              Adicionar
+            </motion.button>
+          ) : (
+            <div className="flex justify-center items-center gap-3">
+              <button
+                onClick={() => decreaseFromCart(product.id)}
+                className="w-8 h-8 flex items-center justify-center text-lg font-bold
+                   rounded-full border border-[#a89050] text-[#a89050]
+                   hover:bg-[#a89050] hover:text-white
+                   dark:border-[#d4b660] dark:text-[#d4b660]
+                   dark:hover:bg-[#d4b660] dark:hover:text-[#0a0a0a]"
+              >
+                −
+              </button>
+              <span className="text-lg font-semibold">{quantity}</span>
+              <button
+                onClick={handleAdd}
+                className="w-8 h-8 flex items-center justify-center text-lg font-bold
+                   rounded-full bg-[#a89050] text-white hover:bg-[#917c3f]
+                   dark:bg-[#d4b660] dark:text-[#0a0a0a]
+                   dark:hover:bg-[#c4a840]"
+              >
+                ＋
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
+    </motion.div>
   )
 }

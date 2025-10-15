@@ -1,3 +1,4 @@
+
 "use client"
 import { useState } from "react"
 import { Product } from "@/types/Product"
@@ -54,22 +55,33 @@ export default function ComboModal({ combo, onConfirm, onClose }: Props) {
                   <p className="text-xs text-gray-500">R$ {opt.price.toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-2">
+                  {/* Botão de diminuir */}
                   <button
                     onClick={() => handleQuantity(opt, -1)}
-                    className="w-7 h-7 bg-gray-300 rounded-full flex items-center justify-center text-lg"
+                    className="w-7 h-7 flex items-center justify-center text-lg font-bold
+               rounded-full border border-[#a89050] text-[#a89050]
+               hover:bg-[#a89050] hover:text-white
+               dark:border-[#d4b660] dark:text-[#d4b660] dark:hover:bg-[#d4b660] dark:hover:text-[#0a0a0a]
+               transition-colors"
                   >
-                    -
+                    −
                   </button>
-                  <span className="w-6 text-center">
-                    {item ? item.quantity : 0}
-                  </span>
+
+                  <span className="w-6 text-center">{item ? item.quantity : 0}</span>
+
+                  {/* Botão de aumentar */}
                   <button
                     onClick={() => handleQuantity(opt, 1)}
-                    className="w-7 h-7 bg-[#a89050] text-white rounded-full flex items-center justify-center text-lg"
+                    className="w-7 h-7 flex items-center justify-center text-lg font-bold
+               rounded-full bg-[#a89050] text-white
+               hover:bg-[#917c3f]
+               dark:bg-[#d4b660] dark:text-[#0a0a0a] dark:hover:bg-[#c4a840]
+               transition-colors"
                   >
                     +
                   </button>
                 </div>
+
               </div>
             )
           })}
@@ -80,25 +92,28 @@ export default function ComboModal({ combo, onConfirm, onClose }: Props) {
             Total: R$ {total.toFixed(2)}
           </p>
           <div className="flex justify-end mt-3 gap-2">
-            <button
-              onClick={onClose}
-              className="px-3 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-            >
-              Cancelar
-            </button>
+            <div className="flex justify-end gap-3 mt-6">
+              {/* 🔹 Botão Cancelar — neutro, elegante */}
+              <button
+                onClick={onClose}
+                className="px-4 py-2 rounded-lg border border-[#a89050] text-[#a89050] hover:bg-[#a89050] hover:text-white transition-colors dark:text-[#d4b660] dark:border-[#d4b660] dark:hover:bg-[#d4b660] dark:hover:text-[#0a0a0a]"
+              >
+                Cancelar
+              </button>
 
-            {/* ✅ Botão Confirmar só ativa se houver seleção */}
-            <button
-              onClick={() => hasSelection && onConfirm(selected)}
-              disabled={!hasSelection}
-              className={`px-4 py-2 rounded-lg text-white transition ${
-                hasSelection
-                  ? "bg-[#a89050] hover:bg-[#917c3f]"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-            >
-              Confirmar
-            </button>
+              {/* 🔸 Botão Confirmar — destaque principal */}
+              <button
+                onClick={() => hasSelection && onConfirm(selected)}
+                disabled={!hasSelection}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${hasSelection
+                  ? "bg-[#a89050] text-white hover:bg-[#917c3f] dark:bg-[#d4b660] dark:text-[#0a0a0a] dark:hover:bg-[#c4a840]"
+                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  }`}
+              >
+                Confirmar
+              </button>
+            </div>
+
           </div>
         </div>
       </div>

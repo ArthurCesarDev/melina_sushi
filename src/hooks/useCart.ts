@@ -19,7 +19,7 @@ export function useCart() {
     })
   }
 
-  const removeFromCart = (id: number) => {
+  const decreaseFromCart = (id: number) => {
     setCart(prev =>
       prev
         .map(p =>
@@ -31,5 +31,5 @@ export function useCart() {
 
   const total = cart.reduce((acc, p) => acc + p.price * p.quantity, 0)
 
-  return { cart, addToCart, removeFromCart, total }
+  return { cart, addToCart, decreaseFromCart, total }
 }

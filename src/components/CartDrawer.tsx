@@ -1,3 +1,4 @@
+
 "use client"
 import { motion, AnimatePresence } from "framer-motion"
 import { CartItem } from "@/hooks/useCart"
@@ -30,10 +31,18 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
             <>
               <ul className="flex-1 overflow-y-auto">
                 {cart.map(p => (
-                  <li key={p.id} className="border-b py-2 flex justify-between items-center">
-                    <div>
-                      <span className="font-medium">{p.name}</span>
-                      <p className="text-sm text-gray-500">
+                  <li
+                    key={p.id}
+                    className="border-b py-2 flex justify-between items-start gap-2"
+                  >
+                    <div className="flex-1">
+                      <span className="font-medium text-[#a89050]">{p.name}</span>
+                      {p.description && (
+                        <pre className="text-xs text-gray-500 whitespace-pre-wrap mt-1">
+                          {p.description}
+                        </pre>
+                      )}
+                      <p className="text-sm text-gray-600 mt-1">
                         {p.quantity}x R$ {p.price.toFixed(2)}
                       </p>
                     </div>
@@ -44,6 +53,7 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
                       ✕
                     </button>
                   </li>
+
                 ))}
               </ul>
 
