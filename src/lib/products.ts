@@ -35,7 +35,7 @@ export const products: Product[] = [
     },
     {
         id: 5,
-        name: "Uramaki Philadelphia ",
+        name: "Uramaki Filadélfia ",
         description: "8 unidades com salmão, cream cheese, arroz.",
         price: 19.99,
         image: "/uramakifiladefia.jpeg",
@@ -43,7 +43,7 @@ export const products: Product[] = [
     },
     {
         id: 6,
-        name: " Nigiri Jô ",
+        name: " Niguiri Jô ",
         description: "8 unidades com salmão, cream cheese, arroz e cebolinha.",
         price: 22.99,
         image: "/jo.jpeg",
@@ -69,7 +69,7 @@ export const products: Product[] = [
     {
         id: 9,
         name: "Combinado de Salmão",
-        description: "12 fatias de salmão fresco cortadas na hora.  1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak "
+        description: "12 fatias de salmão fresco cortadas na hora.  1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak 2"
 
         ,
         price: 39.99,
@@ -80,8 +80,8 @@ export const products: Product[] = [
         id: 10,
         name: "Sunomono 150g",
         description: "Pepino ralado molho e gergelim",
-        price: 9.99,
-        image: "/sunomono.jpg",
+        price: 7.99,
+        image: "/sonomono.jpeg",
         category: "Pratos Crus",
     },
 
@@ -96,10 +96,10 @@ export const products: Product[] = [
         category: "Combos",
         options: [
             { id: 1, name: "Sashimi", price: 2.78 },
-            { id: 2, name: "Jô", price: 2.88 },
+            { id: 2, name: "Niguiri Jô", price: 2.88 },
             { id: 3, name: "Uramaki Filadélfia", price: 2.50 },
             { id: 4, name: "Hossomaki", price: 1.77 },
-            { id: 5, name: "Nigiri Salmão", price: 2.49 },
+            { id: 5, name: "Niguiri Salmão", price: 3.33 },
         ],
     }
 
