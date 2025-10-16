@@ -92,7 +92,7 @@ export const products: Product[] = [
         name: "Monte seu Combo",
         description: "Monte seu combo personalizado escolhendo seus itens favoritos!",
         price: 0,
-        image: "/sashimi.jpg",
+        image: "/sashimi1.jpeg",
         category: "Combos",
         options: [
             { id: 1, name: "Sashimi", price: 2.78 },

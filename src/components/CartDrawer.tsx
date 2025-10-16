@@ -7,7 +7,7 @@ type Props = {
   cart: CartItem[]
   total: number
   onRemove: (id: number) => void
-  onFinish: (address: string, paymentMethod: string) => void
+  onFinish: (address: string, paymentMethod: string, obs: string) => void
   isOpen: boolean
   toggle: () => void
 }
@@ -16,6 +16,7 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
   const [address, setAddress] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [obs, setObs] = useState("")
 
   const handleFinish = () => {
     if (!address.trim()) {
@@ -27,7 +28,8 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
       return
     }
 
-    onFinish(address, paymentMethod)
+    onFinish(address, paymentMethod, obs)
+
   }
 
   return (
@@ -83,6 +85,19 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
                   onChange={e => setAddress(e.target.value)}
                   rows={2}
                   placeholder="Ex: Bloco B 3001"
+                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#a89050] bg-gray-50 dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                />
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Observações:
+                </label>
+                <textarea
+                  value={obs}
+                  onChange={e => setObs(e.target.value)}
+                  rows={2}
+                  placeholder="Ex: Sem cebola, entregar na portaria..."
                   className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#a89050] bg-gray-50 dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 />
               </div>

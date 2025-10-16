@@ -20,7 +20,7 @@ export default function Home() {
     const hour = now.getHours()
 
     const diasPermitidos = [3, 4, 5, 6] // quarta (3), quinta (4), sexta (5), sábado (6)
-    const horarioAberto = hour >= 19 && hour < 23
+    const horarioAberto = hour >= 19 && hour < 22
 
     return diasPermitidos.includes(day) && horarioAberto
   })()
@@ -34,23 +34,32 @@ export default function Home() {
   }, [])
 
   // ⚙️ Enviar pedido com verificação de valor mínimo
-  const handleFinish = (address: string, paymentMethod: string) => {
-    if (total < 14.99) {
-      alert("⚠️ O pedido mínimo é de R$ 14,99.")
-      return
-    }
-
-    const message = encodeURIComponent(
-      `🍣 *Novo Pedido - Melina Sushi:*\n\n${cart
-        .map(
-          p =>
-            `• ${p.name}${p.description ? `\n  ${p.description}` : ""}\n  ${p.quantity}x R$ ${(p.price * p.quantity).toFixed(2)}`
-        )
-        .join("\n\n")}\n\n*Total:* R$ ${total.toFixed(2)}\n\n🏠 *Endereço:* ${address}\n💳 *Pagamento:* ${paymentMethod}`
-    )
-
-    window.open(`https://wa.me/5511988536110?text=${message}`, "_blank")
+ const handleFinish = (address: string, paymentMethod: string, obs: string) => {
+  if (total < 14.99) {
+    alert("⚠️ O pedido mínimo é de R$ 14,99.")
+    return
   }
+
+  let message = `🍣 *Novo Pedido - Melina Sushi:*\n\n${cart
+    .map(
+      p =>
+        `• ${p.name}${p.description ? `\n  ${p.description}` : ""}\n  ${p.quantity}x R$ ${(p.price * p.quantity).toFixed(2)}`
+    )
+    .join("\n\n")}\n\n*Total:* R$ ${total.toFixed(2)}\n\n🏠 *Endereço:* ${address}\n💳 *Pagamento:* ${paymentMethod}`
+
+  if (obs.trim()) {
+    message += `\n📝 *Observações:* ${obs}`
+  }
+
+  // 💰 Dados extras se for pagamento via PIX
+  if (paymentMethod === "Pix") {
+    message += `\n\n💰 *Pagamento via PIX*\n🔑 *Chave:* 11988536110\n👤 *Nome:* Arthur Cesar`
+  }
+
+  window.open(`https://wa.me/5511988536110?text=${encodeURIComponent(message)}`, "_blank")
+}
+
+
 
   return (
     <>
