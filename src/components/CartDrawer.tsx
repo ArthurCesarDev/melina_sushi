@@ -66,11 +66,12 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
                       </p>
                     </div>
                     <button
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 text-xl font-bold px-2 py-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition"
                       onClick={() => onRemove(p.id)}
                     >
                       ✕
                     </button>
+
                   </li>
                 ))}
               </ul>
@@ -135,10 +136,11 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
           {/* ❌ Fechar Drawer */}
           <button
             onClick={toggle}
-            className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            className="absolute top-4 right-4 text-2xl font-bold text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-transform hover:scale-110"
           >
             ✕
           </button>
+
 
           {/* ⚠️ Modal de erro */}
           <AnimatePresence>
