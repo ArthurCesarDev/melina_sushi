@@ -34,30 +34,30 @@ export default function Home() {
   }, [])
 
   // ⚙️ Enviar pedido com verificação de valor mínimo
- const handleFinish = (address: string, paymentMethod: string, obs: string) => {
-  if (total < 14.99) {
-    alert("⚠️ O pedido mínimo é de R$ 14,99.")
-    return
+  const handleFinish = (address: string, paymentMethod: string, obs: string) => {
+    if (total < 14.99) {
+      alert("⚠️ O pedido mínimo é de R$ 14,99.")
+      return
+    }
+
+    let message = `🍣 *Novo Pedido - Melina Sushi:*\n\n${cart
+      .map(
+        p =>
+          `• ${p.name}${p.description ? `\n  ${p.description}` : ""}\n  ${p.quantity}x R$ ${(p.price * p.quantity).toFixed(2)}`
+      )
+      .join("\n\n")}\n\n*Total:* R$ ${total.toFixed(2)}\n\n🏠 *Endereço:* ${address}\n💳 *Pagamento:* ${paymentMethod}`
+
+    if (obs.trim()) {
+      message += `\n📝 *Observações:* ${obs}`
+    }
+
+    // 💰 Dados extras se for pagamento via PIX
+    if (paymentMethod === "Pix") {
+      message += `\n\n💰 *Pagamento via PIX*\n🔑 *Chave:* 11988536110\n👤 *Nome:* Arthur Cesar`
+    }
+
+    window.open(`https://wa.me/5511988536110?text=${encodeURIComponent(message)}`, "_blank")
   }
-
-  let message = `🍣 *Novo Pedido - Melina Sushi:*\n\n${cart
-    .map(
-      p =>
-        `• ${p.name}${p.description ? `\n  ${p.description}` : ""}\n  ${p.quantity}x R$ ${(p.price * p.quantity).toFixed(2)}`
-    )
-    .join("\n\n")}\n\n*Total:* R$ ${total.toFixed(2)}\n\n🏠 *Endereço:* ${address}\n💳 *Pagamento:* ${paymentMethod}`
-
-  if (obs.trim()) {
-    message += `\n📝 *Observações:* ${obs}`
-  }
-
-  // 💰 Dados extras se for pagamento via PIX
-  if (paymentMethod === "Pix") {
-    message += `\n\n💰 *Pagamento via PIX*\n🔑 *Chave:* 11988536110\n👤 *Nome:* Arthur Cesar`
-  }
-
-  window.open(`https://wa.me/5511988536110?text=${encodeURIComponent(message)}`, "_blank")
-}
 
 
 
@@ -74,18 +74,12 @@ export default function Home() {
 
           />
 
-          {/* 🟢 / 🔴 Status */}
-          <div
-            className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium shadow-md ${isOpen ? "bg-green-600" : "bg-red-600"
-              } text-white`}
-          >
-            {isOpen ? "🟢 Aberto" : "🔴 Fechado"}
-          </div>
+
         </div>
 
         {/* 🥢 Logo + nome + descrição */}
         <div className="bg-white dark:bg-[#1a1a1a] flex flex-col items-center py-5 border-t border-gray-200 dark:border-gray-700 relative z-10">
-          {/* 🥢 Logo sobreposta (mesma posição, só na frente) */}
+          {/* 🥢 Logo sobreposta */}
           <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md -mt-12 bg-white relative z-20">
             <img
               src="/logo_melina.jpg"
@@ -93,10 +87,23 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
           </div>
+
           <h2 className="text-2xl font-bold mt-3 text-[#a89050]">Melina Sushi</h2>
-          <p className="text-gray-500 text-sm">
+
+          {/* 🍣 Frase + status + horário */}
+          <p className="text-gray-500 text-sm text-center">
             Delivery artesanal com amor e sabor 🍣
           </p>
+
+          {/* 🔵 Status e horário abaixo */}
+          <div className="mt-1 text-sm font-medium">
+            {isOpen ? (
+              <span className="text-green-600">🟢 Aberto</span>
+            ) : (
+              <span className="text-red-600">🔴 Fechado</span>
+            )}
+            <span className="text-gray-600 ml-2">• Das 19h às 22h</span>
+          </div>
         </div>
       </header>
 
