@@ -6,13 +6,14 @@ import { CartItem } from "@/hooks/useCart"
 type Props = {
   cart: CartItem[]
   total: number
+  desconto?: number
   onRemove: (id: number) => void
   onFinish: (address: string, paymentMethod: string, obs: string) => void
   isOpen: boolean
   toggle: () => void
 }
 
-export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, toggle }: Props) {
+export default function CartDrawer({ cart, total, desconto, onRemove, onFinish, isOpen, toggle }: Props) {
   const [address, setAddress] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -29,7 +30,6 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
     }
 
     onFinish(address, paymentMethod, obs)
-
   }
 
   return (
@@ -49,29 +49,35 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
           ) : (
             <>
               <ul className="flex-1 overflow-y-auto">
-                {cart.map(p => (
+                {cart.filter(p => p.quantity > 0).map((p, index) => (
                   <li
-                    key={p.id}
-                    className="border-b border-gray-200 dark:border-gray-700 py-2 flex justify-between items-start gap-2"
+                    key={`${p.id}-${index}-${p.description ?? ""}`} // ✅ chave única e estável
+                    className="border-b border-gray-200 dark:border-gray-700 py-2 flex justify-between items-start gap-2 transition-all duration-150"
                   >
                     <div className="flex-1">
                       <span className="font-medium text-[#a89050]">{p.name}</span>
+
+                      {/* 📝 Descrição fixa */}
                       {p.description && (
                         <pre className="text-xs text-gray-500 dark:text-gray-400 whitespace-pre-wrap mt-1">
                           {p.description}
                         </pre>
                       )}
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        {p.quantity}x R$ {p.price.toFixed(2)}
+
+                      {/* 💰 Preço estável — sem recriar elemento */}
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 transition-all duration-150">
+                        {p.name.includes("Temaki Empanado 120g") && p.quantity >= 2 && p.price < 30
+                          ? "1x R$ 19,99 + 1x R$ 14,99"
+                          : `${p.quantity}x R$ ${p.price.toFixed(2)}`}
                       </p>
                     </div>
+
                     <button
                       className="text-red-500 hover:text-red-700 text-xl font-bold px-2 py-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition"
                       onClick={() => onRemove(p.id)}
                     >
                       ✕
                     </button>
-
                   </li>
                 ))}
               </ul>
@@ -90,6 +96,7 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
                 />
               </div>
 
+              {/* 📝 Observações */}
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Observações:
@@ -122,7 +129,16 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
 
               {/* 🟢 Botão Finalizar */}
               <div className="mt-5">
-                <p className="font-semibold mb-2">Total: R$ {total.toFixed(2)}</p>
+                {desconto && desconto > 0 && (
+                  <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-sm rounded-lg p-2 mb-2 text-center">
+                    🎉 Promoção aplicada: Temaki sai por <strong>R$ 14,99</strong>!
+                  </div>
+                )}
+
+                <p className="font-semibold mb-2">
+                  Total: R$ {total.toFixed(2)}
+                </p>
+
                 <button
                   onClick={handleFinish}
                   className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
@@ -140,7 +156,6 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
           >
             ✕
           </button>
-
 
           {/* ⚠️ Modal de erro */}
           <AnimatePresence>

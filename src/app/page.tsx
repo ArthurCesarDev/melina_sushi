@@ -25,6 +25,38 @@ export default function Home() {
     return diasPermitidos.includes(day) && horarioAberto
   })()
 
+  // 💸 Cálculo com promoção "Compre 1 Temaki Empanado e leve Philadelphia por 14,99"
+  // 💸 Promoção: Temaki Empanado 120g — 1ª unidade 19,99 e 2ª unidade 14,99 (máximo 2)
+  const calcularTotalComPromocao = () => {
+    let totalBase = 0
+    let desconto = 0
+
+    const itens = cart.map(p => ({ ...p }))
+
+    const empanado = itens.find(p => p.name.includes("Temaki Empanado 120g"))
+
+    if (empanado) {
+      // limita o máximo de 2 unidades
+      if (empanado.quantity > 2) empanado.quantity = 2
+
+      if (empanado.quantity === 2) {
+        totalBase =
+          19.99 + 14.99 +
+          itens
+            .filter(p => !p.name.includes("Temaki Empanado 120g"))
+            .reduce((acc, p) => acc + p.price * p.quantity, 0)
+        desconto = (empanado.price * empanado.quantity) - (19.99 + 14.99)
+      } else {
+        totalBase = itens.reduce((acc, p) => acc + p.price * p.quantity, 0)
+      }
+    } else {
+      totalBase = itens.reduce((acc, p) => acc + p.price * p.quantity, 0)
+    }
+
+    return { totalBase, desconto }
+  }
+
+  const { totalBase: totalComPromo, desconto } = calcularTotalComPromocao()
 
   // 🧩 Escuta o evento do botão “Montar Combo 🍱”
   useEffect(() => {
@@ -102,7 +134,7 @@ export default function Home() {
             ) : (
               <span className="text-red-600">🔴 Fechado</span>
             )}
-            <span className="text-gray-600 ml-2">• Das 19h às 22h</span>
+            <span className="text-gray-600 ml-2">• Das 18h às 22h</span>
           </div>
         </div>
       </header>
@@ -143,12 +175,14 @@ export default function Home() {
         {/* 🛍️ Drawer do Carrinho */}
         <CartDrawer
           cart={cart}
-          total={total}
+          total={totalComPromo}
           onRemove={removeFromCart}
           onFinish={handleFinish}
           isOpen={isCartOpen}
           toggle={() => setCartOpen(false)}
+          desconto={desconto}
         />
+
 
         {/* 🍣 Modal do Combo */}
         {selectedCombo && (
