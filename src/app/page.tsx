@@ -25,38 +25,6 @@ export default function Home() {
     return diasPermitidos.includes(day) && horarioAberto
   })()
 
-  // 💸 Cálculo com promoção "Compre 1 Temaki Empanado e leve Philadelphia por 14,99"
-  // 💸 Promoção: Temaki Empanado 120g — 1ª unidade 19,99 e 2ª unidade 14,99 (máximo 2)
-  const calcularTotalComPromocao = () => {
-    let totalBase = 0
-    let desconto = 0
-
-    const itens = cart.map(p => ({ ...p }))
-
-    const empanado = itens.find(p => p.name.includes("Temaki Empanado 120g"))
-
-    if (empanado) {
-      // limita o máximo de 2 unidades
-      if (empanado.quantity > 2) empanado.quantity = 2
-
-      if (empanado.quantity === 2) {
-        totalBase =
-          19.99 + 14.99 +
-          itens
-            .filter(p => !p.name.includes("Temaki Empanado 120g"))
-            .reduce((acc, p) => acc + p.price * p.quantity, 0)
-        desconto = (empanado.price * empanado.quantity) - (19.99 + 14.99)
-      } else {
-        totalBase = itens.reduce((acc, p) => acc + p.price * p.quantity, 0)
-      }
-    } else {
-      totalBase = itens.reduce((acc, p) => acc + p.price * p.quantity, 0)
-    }
-
-    return { totalBase, desconto }
-  }
-
-  const { totalBase: totalComPromo, desconto } = calcularTotalComPromocao()
 
   // 🧩 Escuta o evento do botão “Montar Combo 🍱”
   useEffect(() => {
@@ -139,6 +107,7 @@ export default function Home() {
         </div>
       </header>
 
+
       {/* 🍱 Conteúdo principal */}
       <main className="max-w-5xl mx-auto py-8 px-4 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-6 text-center text-[#a89050]">
@@ -149,99 +118,96 @@ export default function Home() {
         <CategorySection
           title="Pratos Empanados 🔥"
           products={products.filter(p => p.category === "Pratos Quentes")}
+          onAdd={addToCart}
         />
-
         <CategorySection
           title="Pratos Crus"
           products={products.filter(p => p.category === "Pratos Crus")}
+          onAdd={addToCart}
         />
-
         <CategorySection
           title="Monte seu Combo 🍱"
           products={products.filter(p => p.category === "Combos")}
+          onAdd={addToCart}
         />
-  
 
+        {/* 🛒 Botão do Carrinho */}
+        <button
+          id="cart-button"
+          onClick={() => setCartOpen(true)}
+          className="fixed bottom-5 right-5 bg-[#a89050] text-white px-5 py-3 rounded-full shadow-lg text-lg hover:opacity-90 transition-transform transform hover:scale-105"
+        >
+          🛒 ({cart.reduce((acc, p) => acc + p.quantity, 0)})
+        </button>
 
-      {/* 🛒 Botão do Carrinho */}
-      <button
-        id="cart-button"
-        onClick={() => setCartOpen(true)}
-        className="fixed bottom-5 right-5 bg-[#a89050] text-white px-5 py-3 rounded-full shadow-lg text-lg hover:opacity-90 transition-transform transform hover:scale-105"
-      >
-        🛒 ({cart.reduce((acc, p) => acc + p.quantity, 0)})
-      </button>
-
-      {/* 🛍️ Drawer do Carrinho */}
-      <CartDrawer
-        cart={cart}
-        total={totalComPromo}
-        onRemove={removeFromCart}
-        onFinish={handleFinish}
-        isOpen={isCartOpen}
-        toggle={() => setCartOpen(false)}
-        desconto={desconto}
-      />
-
-
-      {/* 🍣 Modal do Combo */}
-      {selectedCombo && (
-        <ComboModal
-          combo={selectedCombo}
-          onConfirm={(selectedItems) => {
-            // 🧩 Monta descrição personalizada
-            const comboDescription = selectedItems
-              .map(i => `• ${i.quantity}x ${i.name} (R$ ${i.price.toFixed(2)})`)
-              .join("\n")
-
-            const totalCombo = selectedItems.reduce(
-              (sum, i) => sum + i.price * i.quantity,
-              0
-            )
-
-            // 🛒 Adiciona combo como item único no carrinho
-            addToCart({
-              id: Date.now() + Math.random(),
-              name: "Combo Personalizado 🍱",
-              description: comboDescription,
-              price: totalCombo,
-              image: "/combo.jpg",
-              category: "Combos",
-            })
-
-            // 🔥 Efeito visual
-            const cartBtn = document.getElementById("cart-button")
-            const img = document.createElement("img")
-            img.src = "/combo.jpg"
-            img.style.position = "fixed"
-            img.style.width = "80px"
-            img.style.height = "80px"
-            img.style.borderRadius = "50%"
-            img.style.zIndex = "9999"
-            img.style.transition = "all 0.8s cubic-bezier(0.45, 0, 0.55, 1)"
-            img.style.top = "50%"
-            img.style.left = "50%"
-            img.style.transform = "translate(-50%, -50%)"
-            document.body.appendChild(img)
-
-            if (cartBtn) {
-              const rect = cartBtn.getBoundingClientRect()
-              setTimeout(() => {
-                img.style.top = rect.top + "px"
-                img.style.left = rect.left + "px"
-                img.style.width = "0px"
-                img.style.height = "0px"
-                img.style.opacity = "0"
-              }, 50)
-              setTimeout(() => img.remove(), 850)
-            }
-
-            setSelectedCombo(null)
-          }}
-          onClose={() => setSelectedCombo(null)}
+        {/* 🛍️ Drawer do Carrinho */}
+        <CartDrawer
+          cart={cart}
+          total={total}
+          onRemove={removeFromCart}
+          onFinish={handleFinish}
+          isOpen={isCartOpen}
+          toggle={() => setCartOpen(false)}
         />
-      )}
-    </main >
+
+        {/* 🍣 Modal do Combo */}
+        {selectedCombo && (
+          <ComboModal
+            combo={selectedCombo}
+            onConfirm={(selectedItems) => {
+              // 🧩 Monta descrição personalizada
+              const comboDescription = selectedItems
+                .map(i => `• ${i.quantity}x ${i.name} (R$ ${i.price.toFixed(2)})`)
+                .join("\n")
+
+              const totalCombo = selectedItems.reduce(
+                (sum, i) => sum + i.price * i.quantity,
+                0
+              )
+
+              // 🛒 Adiciona combo como item único no carrinho
+              addToCart({
+                id: Date.now() + Math.random(),
+                name: "Combo Personalizado 🍱",
+                description: comboDescription,
+                price: totalCombo,
+                image: "/combo.jpg",
+                category: "Combos",
+              })
+
+              // 🔥 Efeito visual
+              const cartBtn = document.getElementById("cart-button")
+              const img = document.createElement("img")
+              img.src = "/combo.jpg"
+              img.style.position = "fixed"
+              img.style.width = "80px"
+              img.style.height = "80px"
+              img.style.borderRadius = "50%"
+              img.style.zIndex = "9999"
+              img.style.transition = "all 0.8s cubic-bezier(0.45, 0, 0.55, 1)"
+              img.style.top = "50%"
+              img.style.left = "50%"
+              img.style.transform = "translate(-50%, -50%)"
+              document.body.appendChild(img)
+
+              if (cartBtn) {
+                const rect = cartBtn.getBoundingClientRect()
+                setTimeout(() => {
+                  img.style.top = rect.top + "px"
+                  img.style.left = rect.left + "px"
+                  img.style.width = "0px"
+                  img.style.height = "0px"
+                  img.style.opacity = "0"
+                }, 50)
+                setTimeout(() => img.remove(), 850)
+              }
+
+              setSelectedCombo(null)
+            }}
+            onClose={() => setSelectedCombo(null)}
+          />
+        )}
+      </main>
       <Footer />
     </>
   )
