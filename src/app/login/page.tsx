@@ -1,8 +1,8 @@
 // src/app/login/page.tsx
 
 'use client';
-import { LoginForm } from './LoginForm';
-import { LoginContainer } from './styles';
+import { LoginForm } from './components/LoginForm';
+import { LoginContainer } from './components/styles';
 
 export default function LoginPage() {
   return (

@@ -28,16 +28,14 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { darkMode, toggleTheme } = useTheme();
 
-const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const rawValue = e.target.value;
-  const formatted = formatPhoneNumber(rawValue);
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const formatted = formatPhoneNumber(rawValue);
+    const digits = Array.from(rawValue).filter((c) => /\d/.test(c)).join('').slice(0, 11);
 
-
-  const digits = Array.from(rawValue).filter((c) => /\d/.test(c)).join('').slice(0, 11);
-
-  setRawPhoneNumber(digits);
-  setPhoneNumber(formatted);
-};
+    setRawPhoneNumber(digits);
+    setPhoneNumber(formatted);
+  };
 
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -140,7 +138,7 @@ const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       </form>
 
       <SecondaryButton>
-        <MuiLink component={NextLink} href="/resetpassword">
+        <MuiLink component={NextLink} href="/resetar-senha">
           Esqueceu sua senha?
         </MuiLink>
       </SecondaryButton>
