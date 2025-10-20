@@ -1,42 +1,38 @@
+// src/app/layout.tsx
 
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "@/context/CartContext" 
+import { CartProvider } from "@/context/CartContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import ThemeProviderClient from "@/theme/ThemeProviderClient";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const robotoMono = Roboto_Mono({ variable: "--font-roboto-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Sushi Melina 🍣",
+  title: "Cardápio Virtual",
   description: "Delivery artesanal de sushi com amor e sabor.",
   icons: {
-    icon: "/favicon.ico", // 👈 arquivo salvo em /public/favicon.ico
-    shortcut: "/favicon.ico", // opcional, ajuda navegadores antigos
-    apple: "/apple-touch-icon.png", // 👈 opcional (caso queira ícone no iPhone)
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>
-        {/* 👇 envolve toda a aplicação com o CartProvider */}
         <CartProvider>
-          {children}
+          <ThemeProvider>
+            <ThemeProviderClient>{children}</ThemeProviderClient>
+          </ThemeProvider>
         </CartProvider>
       </body>
     </html>
-  )
+  );
 }
+

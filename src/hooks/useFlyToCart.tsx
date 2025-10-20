@@ -1,5 +1,5 @@
 "use client"
-import { useEffect } from "react"
+
 
 export function useFlyToCart() {
   const fly = (imgElement: HTMLImageElement, cartButton: HTMLElement) => {
