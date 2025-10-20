@@ -1,6 +1,8 @@
+
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext" 
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,8 +32,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>
-        {children}
+        {/* 👇 envolve toda a aplicação com o CartProvider */}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
-  );
+  )
 }
