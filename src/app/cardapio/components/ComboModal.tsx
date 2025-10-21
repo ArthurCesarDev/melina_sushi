@@ -34,7 +34,7 @@ export default function ComboModal({ combo, onConfirm, onClose }: Props) {
   }
 
   const total = selected.reduce((sum, i) => sum + i.price * i.quantity, 0)
-  const hasSelection = selected.length > 0 // ✅ verifica se tem algo selecionado
+  const hasSelection = selected.length > 0 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
