@@ -11,6 +11,22 @@ export const products: Product[] = [
     },
     {
         id: 2,
+        name: "Hot Roll Morango com nutella",
+        description: "8 unidades com pedaços de morango e Nutella, empanadas com arroz e finalizadas no açúcar e canela.",
+        price: 23.99,
+        image: "/nutella.jpg",
+        category: "Pratos Quentes",
+    },
+    {
+        id: 3,
+        name: "Hot Roll Doce de leite com banana",
+        description: "8 unidades com doce de leite e banana, empanadas com arroz e finalizadas no açúcar e canela",
+        price: 19.99,
+        image: "/leite.jpg",
+        category: "Pratos Quentes",
+    },
+    {
+        id: 4,
         name: "Temaki Empanado 120g",
         description: "Clássico temaki grelhado com cream cheese e cebolinha.",
         price: 19.99,
@@ -18,7 +34,7 @@ export const products: Product[] = [
         category: "Pratos Quentes",
     },
     {
-        id: 3,
+        id: 5,
         name: "Temaki de Salmão 100g",
         description: "Temaki com salmão.",
         price: 17.99,
@@ -26,7 +42,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 4,
+        id: 6,
         name: "Temaki Philadelphia 120g",
         description: "Temaki com salmão, cream cheese e cebolinha.",
         price: 19.99,
@@ -34,7 +50,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 5,
+        id: 7,
         name: "Uramaki Filadélfia ",
         description: "8 unidades com salmão, cream cheese, arroz.",
         price: 19.99,
@@ -42,7 +58,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 6,
+        id: 8,
         name: "Uramaki Skin ",
         description: "8 unidades com salmão grelhado, cream cheese, arroz e cebolinha.",
         price: 19.99,
@@ -50,7 +66,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 7,
+        id: 9,
         name: " Niguiri Jô ",
         description: "8 unidades com salmão, cream cheese, arroz e cebolinha.",
         price: 22.99,
@@ -58,7 +74,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 8,
+        id: 10,
         name: "Niguiri Salmão",
         description: "6 unidades com salmão e arroz.",
         price: 19.99,
@@ -66,7 +82,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 9,
+        id: 11,
         name: "Sashimi Salmão",
         description: "9 unidades de salmão",
         price: 24.99,
@@ -75,7 +91,7 @@ export const products: Product[] = [
     },
 
     {
-        id: 10,
+        id: 12,
         name: "Combinado de Salmão",
         description: "12 fatias de salmão fresco cortadas na hora.  1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak 2"
 
@@ -85,7 +101,7 @@ export const products: Product[] = [
         category: "Pratos Crus",
     },
     {
-        id: 11,
+        id: 13,
         name: "Sunomono 150g",
         description: "Pepino ralado molho e gergelim",
         price: 7.99,
