@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import { Container, Content } from '@/app/dashboard/categorias/components/styles';
@@ -11,11 +11,26 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // Começa fechado por padrão
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detecta se é mobile
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 🔥 Abre automaticamente no desktop, fecha no mobile
+  useEffect(() => {
+    setIsSidebarOpen(!isMobile);
+  }, [isMobile]);
 
   return (
     <Container>
-      {/* Sidebar fixa */}
+      {/* Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -24,13 +39,16 @@ export default function DashboardLayout({
       {/* Conteúdo principal */}
       <Content
         sx={{
-          marginLeft: isSidebarOpen ? '230px' : '70px', // 👉 mesmo tamanho do Sidebar
-          transition: 'margin 0.3s ease',
+          marginLeft: isMobile ? 0 : isSidebarOpen ? '230px' : '70px',
+          transition: 'margin-left 0.3s ease',
           minHeight: '100vh',
           overflowX: 'hidden',
+          backgroundColor: 'background.default',
         }}
       >
-        <DashboardHeader />
+        {/* Header controla o menu no mobile */}
+        <DashboardHeader onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+
         <Box sx={{ padding: '2rem' }}>{children}</Box>
       </Content>
     </Container>

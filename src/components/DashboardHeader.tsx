@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/system';
-import { Avatar, Typography } from '@mui/material';
+import { Avatar, Typography, IconButton } from '@mui/material';
+import { Menu } from 'lucide-react';
 
 const HeaderContainer = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -10,12 +11,37 @@ const HeaderContainer = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   padding: '1rem 2rem',
   borderBottom: `1px solid ${theme.palette.divider}`,
+  position: 'sticky',
+  top: 0,
+  zIndex: 1100,
+  backgroundColor: theme.palette.background.paper,
 }));
 
-export default function DashboardHeader() {
+export default function DashboardHeader({
+  onMenuClick,
+}: {
+  onMenuClick?: () => void;
+}) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <HeaderContainer>
-      <Typography variant="h6">Painel de Controle</Typography>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {isMobile && (
+          <IconButton onClick={onMenuClick} color="primary">
+            <Menu size={24} />
+          </IconButton>
+        )}
+        <Typography variant="h6">Painel de Controle</Typography>
+      </div>
+
       <Avatar
         src="/logo.jpeg"
         alt="Lanchonete"

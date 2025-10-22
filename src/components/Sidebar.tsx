@@ -1,6 +1,5 @@
-// components/SiderBar.tsx
-
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
 import { useTheme } from '@/context/ThemeContext';
@@ -9,19 +8,23 @@ import {
   ChevronLeft,
   BarChart2,
   Folder,
-  LayoutGrid,
   Settings,
   LogOut,
   Sun,
   Moon,
 } from 'lucide-react';
-import { IconButton, Tooltip } from '@mui/material';
+import {
+  IconButton,
+  Tooltip,
+  Drawer,
+  Box,
+} from '@mui/material';
 import { styled } from '@mui/system';
 import { useRouter, usePathname } from 'next/navigation';
 
 // ====== STYLES ======
 const SidebarContainer = styled('aside')<{ isOpen: boolean }>(({ theme, isOpen }) => ({
-  position: 'fixed', // ✅ fixa na lateral
+  position: 'fixed',
   top: 0,
   left: 0,
   width: isOpen ? 230 : 70,
@@ -32,13 +35,12 @@ const SidebarContainer = styled('aside')<{ isOpen: boolean }>(({ theme, isOpen }
   flexDirection: 'column',
   justifyContent: 'space-between',
   transition: 'all 0.3s ease',
-  zIndex: 1200, // ✅ garante que fique acima do conteúdo
+  zIndex: 1200,
   boxShadow:
     theme.palette.mode === 'dark'
       ? '0 0 10px rgba(0,0,0,0.5)'
       : '0 0 10px rgba(0,0,0,0.1)',
 }));
-
 
 const NavSection = styled('div')({
   display: 'flex',
@@ -62,7 +64,7 @@ const NavItem = styled('div')<{ active?: boolean; isOpen?: boolean }>(
     cursor: 'pointer',
     backgroundColor: active ? theme.palette.primary.main : 'transparent',
     color: active ? theme.palette.primary.contrastText : theme.palette.primary.main,
-    boxShadow: active ? `inset 3px 0 ${theme.palette.primary.dark}` : 'none', // 🔥 filete lateral ativo
+    boxShadow: active ? `inset 3px 0 ${theme.palette.primary.dark}` : 'none',
     transition: 'background-color .2s ease, transform .2s ease',
     '&:hover': {
       backgroundColor: active
@@ -117,18 +119,9 @@ export default function Sidebar({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
-  useEffect(() => {
-    // Só fecha o menu ao entrar no mobile pela primeira vez, não ao abrir manualmente
-    if (isMobile && isOpen && window.innerWidth > 500) {
-      onToggle();
-    }
-  }, [])
-
   const ICON_SIZE = 22;
   const iconColor = muiTheme.palette.primary.main;
 
-  // ====== MENU ITEMS ======
   const items = [
     { label: 'Relatório', icon: BarChart2, path: '/dashboard' },
     { label: 'Categoria', icon: Folder, path: '/dashboard/categorias' },
@@ -137,69 +130,160 @@ export default function Sidebar({
 
   // ====== RETURN ======
   return (
-    <SidebarContainer isOpen={isOpen}>
-      {/* TOPO */}
-      <div style={{ textAlign: isOpen ? 'right' : 'center', padding: '1rem' }}>
-        <IconButton onClick={onToggle} size="small" color="inherit">
-          {isOpen ? (
-            <ChevronLeft size={ICON_SIZE} color={iconColor} />
-          ) : (
-            <Menu size={ICON_SIZE} color={iconColor} />
-          )}
-        </IconButton>
-      </div>
+    <>
+      {/* ===== Desktop Sidebar ===== */}
+      {!isMobile ? (
+        <SidebarContainer isOpen={isOpen}>
+          {/* TOPO (botão abrir/retrair) */}
+          <div style={{ textAlign: isOpen ? 'right' : 'center', padding: '1rem' }}>
+            <IconButton onClick={onToggle} size="small" color="inherit">
+              {isOpen ? (
+                <ChevronLeft size={ICON_SIZE} color={iconColor} />
+              ) : (
+                <Menu size={ICON_SIZE} color={iconColor} />
+              )}
+            </IconButton>
+          </div>
 
-      {/* ITENS DO MENU */}
-      <NavSection>
-        {items.map(({ label, icon: Icon, path }) => {
-          const isActive = pathname === path;
-          return (
-            <Tooltip key={label} title={!isOpen ? label : ''} placement="right">
-              <NavItem
-                isOpen={isOpen}
-                active={isActive}
-                onClick={() => router.push(path)}
-              >
+          {/* ITENS DO MENU */}
+          <NavSection>
+            {items.map(({ label, icon: Icon, path }) => {
+              const isActive = pathname === path;
+              return (
+                <Tooltip key={label} title={!isOpen ? label : ''} placement="right">
+                  <NavItem
+                    isOpen={isOpen}
+                    active={isActive}
+                    onClick={() => router.push(path)}
+                  >
+                    <IconSlot>
+                      <Icon
+                        size={ICON_SIZE}
+                        color={
+                          isActive
+                            ? muiTheme.palette.primary.contrastText
+                            : iconColor
+                        }
+                        strokeWidth={2}
+                      />
+                    </IconSlot>
+                    <NavLabel isOpen={isOpen}>{label}</NavLabel>
+                  </NavItem>
+                </Tooltip>
+              );
+            })}
+          </NavSection>
+
+          {/* RODAPÉ */}
+          <div style={{ marginBottom: '1rem', paddingLeft: 6 }}>
+            <Tooltip title="Trocar tema" placement="right">
+              <NavItem isOpen={isOpen} onClick={toggleTheme}>
                 <IconSlot>
-                  <Icon
-                    size={ICON_SIZE}
-                    color={isActive ? muiTheme.palette.primary.contrastText : iconColor}
-                    strokeWidth={2}
-                  />
+                  {darkMode ? (
+                    <Sun size={20} color={muiTheme.palette.secondary.main} />
+                  ) : (
+                    <Moon size={20} color={muiTheme.palette.secondary.main} />
+                  )}
                 </IconSlot>
-                <NavLabel isOpen={isOpen}>{label}</NavLabel>
+                <NavLabel isOpen={isOpen}>
+                  {darkMode ? 'Tema Claro' : 'Tema Escuro'}
+                </NavLabel>
               </NavItem>
             </Tooltip>
-          );
-        })}
-      </NavSection>
 
-      {/* RODAPÉ */}
-      <div style={{ marginBottom: '1rem', paddingLeft: 6 }}>
-        <Tooltip title="Trocar tema" placement="right">
-          <NavItem isOpen={isOpen} onClick={toggleTheme}>
-            <IconSlot>
-              {darkMode ? (
-                <Sun size={20} color={muiTheme.palette.secondary.main} />
-              ) : (
-                <Moon size={20} color={muiTheme.palette.secondary.main} />
-              )}
-            </IconSlot>
-            <NavLabel isOpen={isOpen}>
-              {darkMode ? 'Tema Claro' : 'Tema Escuro'}
-            </NavLabel>
-          </NavItem>
-        </Tooltip>
+            <Tooltip title={!isOpen ? 'Sair' : ''} placement="right">
+              <NavItem isOpen={isOpen}>
+                <IconSlot>
+                  <LogOut size={20} color={iconColor} />
+                </IconSlot>
+                <NavLabel isOpen={isOpen}>Sair</NavLabel>
+              </NavItem>
+            </Tooltip>
+          </div>
+        </SidebarContainer>
+      ) : (
+        // ===== Mobile Drawer =====
+        <Drawer
+          anchor="left"
+          open={isOpen}
+          onClose={onToggle}
+          ModalProps={{
+            keepMounted: true, // performance
+          }}
+          PaperProps={{
+            sx: {
+              width: 230,
+              bgcolor: muiTheme.palette.background.paper,
+              top: '64px', // 👈 abaixo do Header
+              height: 'calc(100% - 64px)', // 👈 ocupa o restante da tela
+              borderRight: `1px solid ${muiTheme.palette.divider}`,
+            },
+          }}
+          sx={{
+            zIndex: 1100, // 👈 abaixo do header (que está com 1100)
+          }}
+        >
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+            }}
+          >
+            <NavSection>
+              {items.map(({ label, icon: Icon, path }) => {
+                const isActive = pathname === path;
+                return (
+                  <NavItem
+                    key={label}
+                    active={isActive}
+                    isOpen={true}
+                    onClick={() => {
+                      router.push(path);
+                      onToggle();
+                    }}
+                  >
+                    <IconSlot>
+                      <Icon
+                        size={ICON_SIZE}
+                        color={
+                          isActive
+                            ? muiTheme.palette.primary.contrastText
+                            : iconColor
+                        }
+                      />
+                    </IconSlot>
+                    <NavLabel isOpen={true}>{label}</NavLabel>
+                  </NavItem>
+                );
+              })}
+            </NavSection>
 
-        <Tooltip title={!isOpen ? 'Sair' : ''} placement="right">
-          <NavItem isOpen={isOpen}>
-            <IconSlot>
-              <LogOut size={20} color={iconColor} />
-            </IconSlot>
-            <NavLabel isOpen={isOpen}>Sair</NavLabel>
-          </NavItem>
-        </Tooltip>
-      </div>
-    </SidebarContainer>
+            <div style={{ marginBottom: '1rem', paddingLeft: 6 }}>
+              <NavItem isOpen={true} onClick={toggleTheme}>
+                <IconSlot>
+                  {darkMode ? (
+                    <Sun size={20} color={muiTheme.palette.secondary.main} />
+                  ) : (
+                    <Moon size={20} color={muiTheme.palette.secondary.main} />
+                  )}
+                </IconSlot>
+                <NavLabel isOpen={true}>
+                  {darkMode ? 'Tema Claro' : 'Tema Escuro'}
+                </NavLabel>
+              </NavItem>
+
+              <NavItem isOpen={true}>
+                <IconSlot>
+                  <LogOut size={20} color={iconColor} />
+                </IconSlot>
+                <NavLabel isOpen={true}>Sair</NavLabel>
+              </NavItem>
+            </div>
+          </Box>
+        </Drawer>
+      )}
+    </>
   );
 }
