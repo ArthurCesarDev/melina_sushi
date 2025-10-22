@@ -30,23 +30,23 @@ export default function GerenciamentoPage() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid>
           <LogoUploader empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid>
           <BannerUploader empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12} lg={8}>
+        <Grid>
           <EmpresaForm empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid>
           <HorariosForm empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid>
           <Button variant="contained" color="primary" size="large">
             Salvar Alterações
           </Button>
