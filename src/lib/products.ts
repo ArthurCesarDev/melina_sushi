@@ -14,7 +14,7 @@ export const products: Product[] = [
         name: "Hot Roll Morango com nutella",
         description: "8 unidades com pedaços de morango e Nutella, empanadas com arroz e finalizadas no açúcar e canela.",
         price: 23.99,
-        image: "/nutella.jpg",
+        image: "/nutella.jpeg",
         category: "Pratos Quentes",
     },
     {
