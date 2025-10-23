@@ -22,7 +22,7 @@ export const products: Product[] = [
         name: "Hot Roll Doce de leite com banana",
         description: "8 unidades com doce de leite e banana, empanadas com arroz e finalizadas no açúcar e canela",
         price: 19.99,
-        image: "/leite.jpg",
+        image: "/",
         category: "Pratos Quentes",
     },
     {
