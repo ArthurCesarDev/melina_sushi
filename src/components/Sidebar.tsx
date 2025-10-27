@@ -1,5 +1,7 @@
+// components/siderbar.tsx
+
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Drawer,
   Box,
@@ -25,6 +27,9 @@ import {
   Moon,
   LogOut,
 } from 'lucide-react';
+import LogoutModal from '@/components/UI/LogoutModal';
+import { logoutUser } from '@/services/logoutService';
+import { useToast } from '@/context/ToastContext';
 
 export default function Sidebar({
   open,
@@ -43,6 +48,8 @@ export default function Sidebar({
   const { darkMode, toggleTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
+  const { showToast } = useToast();
+  const [logoutOpen, setLogoutOpen] = useState(false); // controla modal
 
   const items = [
     { label: 'Relatório', icon: BarChart2, path: '/dashboard' },
@@ -53,158 +60,178 @@ export default function Sidebar({
   const drawerWidth = collapsed ? 70 : 230;
   const hoverBg = `${muiTheme.palette.secondary.main}22`;
 
-  return (
-    <Drawer
-      variant={variant}
-      open={open}
-      onClose={onClose}
-      ModalProps={{ keepMounted: true }}
-      PaperProps={{
-        sx: {
-          width: drawerWidth,
-          bgcolor: muiTheme.palette.background.paper,
-          color: muiTheme.palette.text.primary,
-          borderRight: `1px solid ${muiTheme.palette.divider}`,
-          transition: 'width 0.3s ease',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        },
-      }}
-      sx={{ zIndex: 1300 }}
-    >
-      {/* TOPO */}
-      <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
-        {variant === 'permanent' ? (
-          <IconButton onClick={onToggleCollapse}>
-            {collapsed ? <ChevronRight size={22} /> : <ChevronLeft size={22} />}
-          </IconButton>
-        ) : (
-          <IconButton onClick={onClose}>
-            <ChevronLeft size={22} />
-          </IconButton>
-        )}
-      </Box>
+  const handleLogout = async () => {
+    const ok = await logoutUser();
+    if (ok) {
+      showToast('Logout realizado com sucesso!', 'success');
+    } else {
+      showToast('Falha ao sair. Sessão encerrada localmente.', 'warning');
+    }
+    setLogoutOpen(false);
+    router.push('/login');
+  };
 
-      {/* LISTA PRINCIPAL */}
-      <List sx={{ px: 1, flexGrow: 1, overflowY: 'auto' }}>
-        {items.map(({ label, icon: Icon, path }) => {
-          const active = pathname === path;
-          return (
-            <ListItem key={label} disablePadding sx={{ display: 'block' }}>
-              <Tooltip title={collapsed ? label : ''} placement="right">
-                <ListItemButton
-                  selected={active}
-                  onClick={() => {
-                    router.push(path);
-                    if (variant === 'temporary') onClose();
-                  }}
-                  sx={{
-                    justifyContent: collapsed ? 'center' : 'flex-start',
-                    px: collapsed ? 1.25 : 2,
-                    borderRadius: 2,
-                    my: 0.5,
-                    '&:hover': { backgroundColor: hoverBg },
-                    '&.Mui-selected': {
-                      backgroundColor: muiTheme.palette.primary.main,
-                      color: muiTheme.palette.primary.contrastText,
-                      '& .MuiListItemIcon-root': {
-                        color: muiTheme.palette.primary.contrastText,
-                      },
-                      '&:hover': { backgroundColor: muiTheme.palette.primary.main },
-                    },
-                  }}
-                >
-                  <ListItemIcon
+  return (
+    <>
+      <Drawer
+        variant={variant}
+        open={open}
+        onClose={onClose}
+        ModalProps={{ keepMounted: true }}
+        PaperProps={{
+          sx: {
+            width: drawerWidth,
+            bgcolor: muiTheme.palette.background.paper,
+            color: muiTheme.palette.text.primary,
+            borderRight: `1px solid ${muiTheme.palette.divider}`,
+            transition: 'width 0.3s ease',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          },
+        }}
+        sx={{ zIndex: 1300 }}
+      >
+        {/* TOPO */}
+        <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
+          {variant === 'permanent' ? (
+            <IconButton onClick={onToggleCollapse}>
+              {collapsed ? <ChevronRight size={22} /> : <ChevronLeft size={22} />}
+            </IconButton>
+          ) : (
+            <IconButton onClick={onClose}>
+              <ChevronLeft size={22} />
+            </IconButton>
+          )}
+        </Box>
+
+        {/* LISTA PRINCIPAL */}
+        <List sx={{ px: 1, flexGrow: 1, overflowY: 'auto' }}>
+          {items.map(({ label, icon: Icon, path }) => {
+            const active = pathname === path;
+            return (
+              <ListItem key={label} disablePadding sx={{ display: 'block' }}>
+                <Tooltip title={collapsed ? label : ''} placement="right">
+                  <ListItemButton
+                    selected={active}
+                    onClick={() => {
+                      router.push(path);
+                      if (variant === 'temporary') onClose();
+                    }}
                     sx={{
-                      minWidth: 0,
-                      mr: collapsed ? 0 : 1.5,
-                      justifyContent: 'center',
-                      color: active
-                        ? muiTheme.palette.primary.main
-                        : muiTheme.palette.text.secondary,
+                      justifyContent: collapsed ? 'center' : 'flex-start',
+                      px: collapsed ? 1.25 : 2,
+                      borderRadius: 2,
+                      my: 0.5,
+                      '&:hover': { backgroundColor: hoverBg },
+                      '&.Mui-selected': {
+                        backgroundColor: muiTheme.palette.primary.main,
+                        color: muiTheme.palette.primary.contrastText,
+                        '& .MuiListItemIcon-root': {
+                          color: muiTheme.palette.primary.contrastText,
+                        },
+                        '&:hover': { backgroundColor: muiTheme.palette.primary.main },
+                      },
                     }}
                   >
-                    <Icon size={20} />
-                  </ListItemIcon>
-
-                  {!collapsed && (
-                    <ListItemText
-                      primary={label}
+                    <ListItemIcon
                       sx={{
-                        '& .MuiListItemText-primary': { fontWeight: 500 },
+                        minWidth: 0,
+                        mr: collapsed ? 0 : 1.5,
+                        justifyContent: 'center',
+                        color: active
+                          ? muiTheme.palette.primary.main
+                          : muiTheme.palette.text.secondary,
                       }}
-                    />
-                  )}
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          );
-        })}
-      </List>
+                    >
+                      <Icon size={20} />
+                    </ListItemIcon>
 
-      {/* RODAPÉ */}
-      <Box sx={{ px: 1, pb: 1 }}>
-        <Divider sx={{ mb: 1, opacity: 0.3 }} />
+                    {!collapsed && (
+                      <ListItemText
+                        primary={label}
+                        sx={{
+                          '& .MuiListItemText-primary': { fontWeight: 500 },
+                        }}
+                      />
+                    )}
+                  </ListItemButton>
+                </Tooltip>
+              </ListItem>
+            );
+          })}
+        </List>
 
-        {/* alternar tema */}
-        <Tooltip title={collapsed ? 'Alternar tema' : ''} placement="right">
-          <ListItemButton
-            onClick={toggleTheme}
-            sx={{
-              justifyContent: collapsed ? 'center' : 'flex-start',
-              px: collapsed ? 1.25 : 2,
-              borderRadius: 2,
-              my: 0.5,
-              '&:hover': { backgroundColor: hoverBg },
-            }}
-          >
-            <ListItemIcon
+        {/* RODAPÉ */}
+        <Box sx={{ px: 1, pb: 1 }}>
+          <Divider sx={{ mb: 1, opacity: 0.3 }} />
+
+          {/* alternar tema */}
+          <Tooltip title={collapsed ? 'Alternar tema' : ''} placement="right">
+            <ListItemButton
+              onClick={toggleTheme}
               sx={{
-                minWidth: 0,
-                mr: collapsed ? 0 : 1.5,
-                justifyContent: 'center',
-                color: muiTheme.palette.text.secondary,
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                px: collapsed ? 1.25 : 2,
+                borderRadius: 2,
+                my: 0.5,
+                '&:hover': { backgroundColor: hoverBg },
               }}
             >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </ListItemIcon>
-            {!collapsed && <ListItemText primary="Alternar tema" />}
-          </ListItemButton>
-        </Tooltip>
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: collapsed ? 0 : 1.5,
+                  justifyContent: 'center',
+                  color: muiTheme.palette.text.secondary,
+                }}
+              >
+                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </ListItemIcon>
+              {!collapsed && <ListItemText primary="Alternar tema" />}
+            </ListItemButton>
+          </Tooltip>
 
-        {/* sair */}
-        <Tooltip title={collapsed ? 'Sair' : ''} placement="right">
-          <ListItemButton
-            onClick={() => alert('Sair')}
-            sx={{
-              justifyContent: collapsed ? 'center' : 'flex-start',
-              px: collapsed ? 1.25 : 2,
-              borderRadius: 2,
-              my: 0.5,
-              '&:hover': { backgroundColor: hoverBg },
-            }}
-          >
-            <ListItemIcon
+          {/* sair */}
+          <Tooltip title={collapsed ? 'Sair' : ''} placement="right">
+            <ListItemButton
+              onClick={() => setLogoutOpen(true)} // abre modal
               sx={{
-                minWidth: 0,
-                mr: collapsed ? 0 : 1.5,
-                justifyContent: 'center',
-                color: muiTheme.palette.text.secondary,
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                px: collapsed ? 1.25 : 2,
+                borderRadius: 2,
+                my: 0.5,
+                '&:hover': { backgroundColor: hoverBg },
               }}
             >
-              <LogOut size={20} />
-            </ListItemIcon>
-            {!collapsed && (
-              <ListItemText
-                primary="Sair"
-                sx={{ '& .MuiListItemText-primary': { fontWeight: 500 } }}
-              />
-            )}
-          </ListItemButton>
-        </Tooltip>
-      </Box>
-    </Drawer>
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: collapsed ? 0 : 1.5,
+                  justifyContent: 'center',
+                  color: muiTheme.palette.text.secondary,
+                }}
+              >
+                <LogOut size={20} />
+              </ListItemIcon>
+              {!collapsed && (
+                <ListItemText
+                  primary="Sair"
+                  sx={{ '& .MuiListItemText-primary': { fontWeight: 500 } }}
+                />
+              )}
+            </ListItemButton>
+          </Tooltip>
+        </Box>
+      </Drawer>
+
+      {/* MODAL DE LOGOUT */}
+      <LogoutModal
+        open={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
+        onConfirm={handleLogout}
+      />
+    </>
   );
 }
