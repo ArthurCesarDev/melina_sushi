@@ -1,32 +1,31 @@
 'use client';
 import { useState } from 'react';
-import CategoryList from './components/CategoryList';
-import CategoryForm from './components/CategoryForm';
-import ProductForm from './components/ProductForm';
-import { Button } from '@mui/material';
+import { Button, Typography, Box } from '@mui/material';
+import { CategoryList, CategoryForm } from '@/components/AdminCategoriasComponents';
 
 export default function CategoriasPage() {
   const [showCategoryForm, setShowCategoryForm] = useState(false);
-  const [showProductForm, setShowProductForm] = useState(false);
 
   return (
-    <>
-      <h2>Gerenciar Categorias</h2>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+        Gerenciar Categorias 
+      </Typography>
 
-      <div style={{ display: 'flex', gap: '1rem', margin: '1.5rem 0' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setShowCategoryForm(true)}
-        >
-          + Nova Categoria
-        </Button>
-      </div>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setShowCategoryForm(true)}
+        sx={{ mb: 3 }}
+      >
+        + Nova Categoria
+      </Button>
 
       <CategoryList />
 
-      {showCategoryForm && <CategoryForm onClose={() => setShowCategoryForm(false)} />}
-      {showProductForm && <ProductForm onClose={() => setShowProductForm(false)} />}
-    </>
+      {showCategoryForm && (
+        <CategoryForm onClose={() => setShowCategoryForm(false)} />
+      )}
+    </Box>
   );
 }

@@ -1,5 +1,4 @@
 // app/login/LoginForm.tsx
-
 'use client';
 
 import React, { useState } from 'react';
@@ -11,7 +10,9 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import NextLink from 'next/link';
 import MuiLink from '@mui/material/Link';
 import { useTheme } from '@/context/ThemeContext';
-import { formatPhoneNumber } from '@/utils/formatPhoneNumber'
+import { useRouter } from 'next/navigation';
+import { loginAdmin } from '@/services/authAdmin';
+import { useToast } from '@/context/ToastContext';
 import {
   FormContainer,
   InputGroup,
@@ -19,48 +20,48 @@ import {
   Input,
   Button,
   SecondaryButton,
-} from './styles';
+} from '@/styles/Styles';
 
 export function LoginForm() {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [rawPhoneNumber, setRawPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const { darkMode, toggleTheme } = useTheme();
+  const router = useRouter();
+  const { showToast } = useToast();
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value;
-    const formatted = formatPhoneNumber(rawValue);
-    const digits = Array.from(rawValue).filter((c) => /\d/.test(c)).join('').slice(0, 11);
-
-    setRawPhoneNumber(digits);
-    setPhoneNumber(formatted);
-  };
-
-
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log('Telefone:', rawPhoneNumber);
-    console.log('Senha:', password);
+    setLoading(true);
+
+    try {
+      const result = await loginAdmin(email, password);
+      showToast(result.message);
+      router.push('/dashboard');
+    } catch (err: any) {
+      console.error('Erro no login:', err);
+      showToast(err.message || 'Falha ao fazer login. Verifique suas credenciais.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <FormContainer>
-      {/* Botão de alternar tema */}
+      {/* Alternar tema */}
       <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
         <IconButton
           onClick={toggleTheme}
           color="inherit"
-          sx={{
-            '&:hover': {
-              backgroundColor: darkMode ? '#333' : '#eee',
-            },
-          }}
+          sx={{ '&:hover': { backgroundColor: darkMode ? '#333' : '#eee' } }}
         >
           {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
         </IconButton>
       </div>
 
+      {/* Logo */}
       <img
         src="/logo.jpeg"
         alt="Logo da Empresa"
@@ -73,11 +74,12 @@ export function LoginForm() {
         }}
       />
 
+      {/* Títulos centralizados */}
       <Typography
         variant="h5"
-        gutterBottom
         color="text.primary"
-        sx={{ fontWeight: 600, mb: 2 }}
+        align="center"
+        sx={{ fontWeight: 600, mb: 1 }}
       >
         Acesse sua conta
       </Typography>
@@ -85,22 +87,22 @@ export function LoginForm() {
       <Typography
         variant="body2"
         color="text.secondary"
-        gutterBottom
+        align="center"
         sx={{ mb: 3 }}
       >
-        Use sua chave pessoal para continuar
+        Insira seu e-mail e senha para continuar
       </Typography>
 
+      {/* Formulário */}
       <form onSubmit={handleSubmit}>
         <InputGroup>
-          <Label>Número de telefone:</Label>
+          <Label>E-mail:</Label>
           <Input
-            type="text"
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={handlePhoneChange}
-            placeholder="(11) 98765-4321"
-            maxLength={15}
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="exemplo@empresa.com"
             required
           />
         </InputGroup>
@@ -127,18 +129,19 @@ export function LoginForm() {
               padding: 0,
               color: '#888',
             }}
-            aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
             type="button"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </IconButton>
         </InputGroup>
 
-        <Button type="submit">Entrar</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Entrando...' : 'Entrar'}
+        </Button>
       </form>
 
       <SecondaryButton>
-        <MuiLink component={NextLink} href="/resetar-senha">
+        <MuiLink component={NextLink} href="/resetar-senha" underline="hover">
           Esqueceu sua senha?
         </MuiLink>
       </SecondaryButton>
@@ -146,6 +149,7 @@ export function LoginForm() {
       <Typography
         variant="body2"
         color="text.secondary"
+        align="center"
         sx={{ mt: 3, fontSize: '0.75rem' }}
       >
         © {new Date().getFullYear()} Códice d’Eli – Para aqueles que cortam o tempo com precisão

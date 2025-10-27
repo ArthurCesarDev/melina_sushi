@@ -1,3 +1,4 @@
+//  components/ResetPassowordForm.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -8,14 +9,8 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MuiLink from '@mui/material/Link';
 import NextLink from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
-import {
-  FormContainer,
-  InputGroup,
-  Label,
-  Input,
-  Button,
-  SecondaryButton,
-} from './styles';
+import { FormContainer, InputGroup, Label, Input, Button, SecondaryButton } from '@/styles/Styles';
+
 
 export function ResetPasswordForm() {
   const { darkMode, toggleTheme } = useTheme();
@@ -28,7 +23,6 @@ export function ResetPasswordForm() {
 
   return (
     <FormContainer>
-      {/* Botão de alternar tema */}
       <div style={{ textAlign: 'right', marginBottom: '1rem' }}>
         <IconButton
           onClick={toggleTheme}
@@ -55,20 +49,12 @@ export function ResetPasswordForm() {
         }}
       />
 
-      <Typography
-        variant="h5"
-        color="text.primary"
-        sx={{ fontWeight: 600, mb: 2 }}
-      >
-    Esqueci minha senha
+      <Typography variant="h5" color="text.primary" sx={{ fontWeight: 600, mb: 2 }}>
+        Esqueci minha senha
       </Typography>
 
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        sx={{ mb: 3 }}
-      >
-       Digite seu e-mail para receber um link de redefinição.
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        Digite seu e-mail para receber um link de redefinição.
       </Typography>
 
       <form onSubmit={handleSubmit}>
@@ -87,7 +73,6 @@ export function ResetPasswordForm() {
         <Button type="submit">Enviar link de redefinição</Button>
       </form>
 
-      {/* Link para voltar ao login */}
       <SecondaryButton>
         <MuiLink
           component={NextLink}

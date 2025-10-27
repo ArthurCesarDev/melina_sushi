@@ -1,6 +1,39 @@
-import { styled } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
+import { Box, styled, BoxProps } from '@mui/material';
 
+
+export const ResetContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100vh',
+})
+
+// 🔹 Box de upload (usado em várias telas)
+export const UploadBox = styled(Box)<BoxProps>(({ theme }) => ({
+  border: `2px dashed ${theme.palette.grey[400]}`,
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(2),
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: theme.spacing(1),
+  cursor: 'pointer',
+  transition: 'border-color 0.3s ease',
+
+  '&:hover': {
+    borderColor: theme.palette.primary.main,
+  },
+}));
+
+// 🔹 Linha padrão (usada para horários, listas, etc.)
+export const DayRow = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
+  padding: '0.5rem 0',
+  borderBottom: `1px solid ${theme.palette.divider}`,
+}));
 export const LoginContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
@@ -9,7 +42,6 @@ export const LoginContainer = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   padding: theme.spacing(2),
 }));
-
 export const FormContainer = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: '2rem',
@@ -26,13 +58,7 @@ export const InputGroup = styled('div')(() => ({
   textAlign: 'left',
 }));
 
-export const Label = styled(Typography)(({ theme }) => ({
-  fontSize: '0.85rem',
-  fontWeight: 500,
-  color: theme.palette.text.secondary,
-  marginBottom: '0.5rem',
-  marginLeft: '0.5rem',
-}));
+
 
 export const Input = styled('input')(({ theme }) => ({
   width: '100%',
@@ -99,3 +125,17 @@ export const SecondaryButton = styled('button')(({ theme }) => ({
         : 'rgba(0,0,0,0.05)',
   },
 }));
+
+export const Label = styled('label')(({ theme }) => ({
+  display: 'block',
+  marginBottom: '0.5rem',
+  fontSize: '0.9rem',
+  fontWeight: 500,
+  color: theme.palette.text.primary,
+}));
+
+
+
+
+
+

@@ -1,10 +1,8 @@
 'use client';
-import { Typography, Button, Grid } from '@mui/material';
+
 import { useState } from 'react';
-import LogoUploader from './components/LogoUploader';
-import BannerUploader from './components/BannerUploader';
-import EmpresaForm from './components/EmpresaForm';
-import HorariosForm from './components/HorariosForm';
+import { Typography, Button, Grid } from '@mui/material';
+import { LogoUploader, BannerUploader, EmpresaForm, HorariosForm } from '@/components/AdminGerenciamentoComponents';
 
 export default function GerenciamentoPage() {
   const [empresa, setEmpresa] = useState({
@@ -30,23 +28,23 @@ export default function GerenciamentoPage() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid>
           <LogoUploader empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid>
           <BannerUploader empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12} lg={8}>
+        <Grid>
           <EmpresaForm empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid>
           <HorariosForm empresa={empresa} setEmpresa={setEmpresa} />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid>
           <Button variant="contained" color="primary" size="large">
             Salvar Alterações
           </Button>

@@ -1,3 +1,5 @@
+// dashboard/page.tsx
+
 'use client';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { TrendingUp, Users, ShoppingBag, DollarSign } from 'lucide-react';

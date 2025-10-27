@@ -1,10 +1,16 @@
 'use client';
-
-import React, { useState } from 'react';
-import { Typography, Button, Paper, IconButton, Tooltip } from '@mui/material';
+import { useState } from 'react';
+import {
+  Typography,
+  Button,
+  Paper,
+  IconButton,
+  Tooltip,
+  Box,
+} from '@mui/material';
 import { Edit, Trash2, PlusCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import ProductForm from '../components/ProductForm';
+import { ProductForm } from '@/components/AdminCategoriasComponents';
 
 export default function CategoriaPage() {
   const { id } = useParams();
@@ -13,7 +19,6 @@ export default function CategoriaPage() {
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
-  // 🔹 exemplo de produtos mockados
   const produtos = [
     { id: 1, nome: 'X-Salada', preco: 15.9, esgotado: false, promocao: true },
     { id: 2, nome: 'Coca-Cola 350ml', preco: 6.0, esgotado: false, promocao: false },
@@ -30,7 +35,7 @@ export default function CategoriaPage() {
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <Box sx={{ p: 3 }}>
       <Button
         variant="outlined"
         color="primary"
@@ -40,8 +45,8 @@ export default function CategoriaPage() {
         ← Voltar
       </Button>
 
-      <Typography variant="h5" gutterBottom>
-        Gerenciar produtos da categoria #{id}
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+        Produtos da categoria #{id}
       </Typography>
 
       <Button
@@ -51,7 +56,7 @@ export default function CategoriaPage() {
         startIcon={<PlusCircle size={20} />}
         sx={{ mb: 3 }}
       >
-        Novo produto
+        Novo Produto
       </Button>
 
       {produtos.map((p) => (
@@ -98,6 +103,6 @@ export default function CategoriaPage() {
           produto={editingProduct}
         />
       )}
-    </div>
+    </Box>
   );
 }

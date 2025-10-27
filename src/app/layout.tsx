@@ -1,11 +1,14 @@
 // src/app/layout.tsx
-
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ThemeProviderClient from "@/theme/ThemeProviderClient";
+
+
+import { ToastProvider } from "@/context/ToastContext";
+import ToastContainer from "@/components/ToastContainer";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const robotoMono = Roboto_Mono({ variable: "--font-roboto-mono", subsets: ["latin"] });
@@ -28,11 +31,15 @@ export default function RootLayout({
       <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>
         <CartProvider>
           <ThemeProvider>
-            <ThemeProviderClient>{children}</ThemeProviderClient>
+            <ToastProvider>
+              <ThemeProviderClient>
+                {children}
+                <ToastContainer />
+              </ThemeProviderClient>
+            </ToastProvider>
           </ThemeProvider>
         </CartProvider>
       </body>
     </html>
   );
 }
-

@@ -4,7 +4,7 @@
 
 /* 🎨 Tema claro padrão */
 :root {
-  --background: #ffffff;
+  color-scheme: light dark;
   --foreground: #171717;
 
   --color-background: var(--background);
@@ -48,11 +48,7 @@ body {
 }
 .modal,
 .dialog,
-.bg-white,
-.bg-gray-100 {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-}
+
 
 .text-black,
 .text-gray-800,
