@@ -1,192 +1,216 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Box,
   Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   TextField,
-  Switch,
-  FormControlLabel,
-  IconButton,
-  Paper,
   Typography,
+  Paper,
+  IconButton,
   Tooltip,
 } from '@mui/material';
-import { styled } from '@mui/system';
-import { Edit, Trash2, PlusCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Edit, Trash2, List } from 'lucide-react'; // 👈 adiciona o ícone de lista
+import { useRouter } from 'next/navigation'; // 👈 adiciona o hook de navegação
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from '@/services/categoryService';
+import { useToast } from '@/context/ToastContext';
 
-// ---------- COMPONENTE: CategoryList ----------
-const CategoryCard = styled(Paper)(({ theme }) => ({
-  padding: '1rem',
-  marginBottom: '1rem',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  borderRadius: 10,
-  border: `1px solid ${theme.palette.divider}`,
-}));
-
+// 🔹 LISTAGEM DE CATEGORIAS
 export function CategoryList() {
-  const router = useRouter();
-  const categorias = [
-    { id: 1, nome: 'Lanches' },
-    { id: 2, nome: 'Bebidas' },
-    { id: 3, nome: 'Sobremesas' },
-  ];
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState<any | null>(null);
+  const [openForm, setOpenForm] = useState(false);
+
+  const { showToast } = useToast();
+  const router = useRouter(); // ✅ necessário pra navegar entre páginas
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const items = await getCategories();
+      setCategories(items);
+    } catch (err: any) {
+      console.error('Erro ao buscar categorias:', err);
+      showToast('Erro ao buscar categorias.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Tem certeza que deseja excluir esta categoria?')) {
+      try {
+        const result = await deleteCategory(id);
+        showToast(result.message || 'Categoria excluída com sucesso!', 'success');
+        fetchCategories();
+      } catch (err: any) {
+        console.error('Erro ao excluir categoria:', err);
+        showToast(err.message || 'Erro ao excluir categoria', 'error');
+      }
+    }
+  };
+
+  const handleSuccess = () => {
+    fetchCategories();
+    setOpenForm(false);
+    setEditing(null);
+  };
 
   return (
-    <>
-      {categorias.map((cat) => (
-        <CategoryCard key={cat.id}>
-          <Typography variant="body1">{cat.nome}</Typography>
-          <div>
-            <Tooltip title="Ver produtos">
-              <IconButton
-                color="primary"
-                onClick={() => router.push(`/dashboard/categorias/${cat.id}`)}
-              >
-                <PlusCircle size={20} />
-              </IconButton>
-            </Tooltip>
+    <Box>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setOpenForm(true)}
+        sx={{ mb: 3 }}
+      >
+        + Nova Categoria
+      </Button>
 
-            <Tooltip title="Editar categoria">
-              <IconButton color="primary">
-                <Edit size={20} />
-              </IconButton>
-            </Tooltip>
+      {loading && <Typography>Carregando categorias...</Typography>}
 
-            <Tooltip title="Excluir categoria">
-              <IconButton color="error">
-                <Trash2 size={20} />
-              </IconButton>
-            </Tooltip>
-          </div>
-        </CategoryCard>
-      ))}
-    </>
+      {!loading &&
+        categories.map((cat) => (
+          <Paper
+            key={cat.id}
+            sx={{
+              p: 2,
+              mb: 2,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="subtitle1" fontWeight={600}>
+              {cat.name}
+            </Typography>
+
+            <Box>
+              {/* ✅ NOVO BOTÃO PARA IR AOS ITENS */}
+              <Tooltip title="Ver Itens da Categoria">
+                <IconButton
+                  color="primary"
+                  onClick={() => router.push(`/dashboard/categorias/${encodeURIComponent(cat.name)}`)}
+                >
+                  <List size={20} />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Editar">
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    setEditing(cat);
+                    setOpenForm(true);
+                  }}
+                >
+                  <Edit size={20} />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Excluir">
+                <IconButton color="error" onClick={() => handleDelete(cat.id)}>
+                  <Trash2 size={20} />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Paper>
+        ))}
+
+      {openForm && (
+        <CategoryForm
+          initialData={editing}
+          onClose={() => {
+            setOpenForm(false);
+            setEditing(null);
+          }}
+          onSuccess={handleSuccess}
+        />
+      )}
+    </Box>
   );
 }
 
-// ---------- COMPONENTE: CategoryForm ----------
-export function CategoryForm({ onClose }: { onClose: () => void }) {
-  const [nome, setNome] = useState('');
+// 🔹 FORMULÁRIO DE CRIAÇÃO/EDIÇÃO
+export function CategoryForm({
+  initialData,
+  onClose,
+  onSuccess,
+}: {
+  initialData?: any;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [name, setName] = useState(initialData?.name || '');
+  const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
-  const handleSubmit = () => {
-    console.log('Nova categoria:', nome);
-    onClose();
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      let result;
+      if (initialData) {
+        result = await updateCategory({ id: initialData.id, name });
+      } else {
+        result = await createCategory({ name });
+      }
+
+      showToast(result.message || 'Operação realizada com sucesso.', 'success');
+      onSuccess(); // atualiza lista e fecha modal
+    } catch (err: any) {
+      console.error('Erro ao salvar categoria:', err);
+      showToast(err.message || 'Erro ao salvar categoria', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle>Cadastrar Categoria</DialogTitle>
-      <DialogContent>
-        <TextField
-          label="Nome da categoria"
-          fullWidth
-          margin="normal"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Salvar
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
-// ---------- COMPONENTE: ProductForm ----------
-export function ProductForm({
-  onClose,
-  produto,
-}: {
-  onClose: () => void;
-  produto?: any;
-}) {
-  const [nome, setNome] = useState('');
-  const [preco, setPreco] = useState('');
-  const [emPromocao, setEmPromocao] = useState(false);
-  const [esgotado, setEsgotado] = useState(false);
-
-  useEffect(() => {
-    if (produto) {
-      setNome(produto.nome || '');
-      setPreco(produto.preco?.toString() || '');
-      setEmPromocao(!!produto.promocao);
-      setEsgotado(!!produto.esgotado);
-    }
-  }, [produto]);
-
-  const handleSubmit = () => {
-    const data = { nome, preco, emPromocao, esgotado };
-    console.log(produto ? 'Atualizando produto:' : 'Novo produto:', data);
-    onClose();
-  };
-
-  return (
-    <Dialog open onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
-        {produto ? 'Editar Produto' : 'Cadastrar Produto'}
+        {initialData ? 'Editar Categoria' : 'Nova Categoria'}
       </DialogTitle>
       <DialogContent>
-        <TextField
-          label="Nome do produto"
-          fullWidth
-          margin="normal"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
+        <Box sx={{ mt: 2 }}>
+          <TextField
+            label="Nome da Categoria"
+            fullWidth
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
-        <TextField
-          label="Preço (R$)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={preco}
-          onChange={(e) => setPreco(e.target.value)}
-        />
-
-        <FormControlLabel
-          control={
-            <Switch
-              checked={emPromocao}
-              onChange={() => setEmPromocao(!emPromocao)}
-            />
-          }
-          label="Está em promoção?"
-        />
-
-        <FormControlLabel
-          control={
-            <Switch
-              checked={esgotado}
-              onChange={() => setEsgotado(!esgotado)}
-            />
-          }
-          label="Produto esgotado"
-        />
-
-        <TextField
-          type="file"
-          fullWidth
-          margin="normal"
-          inputProps={{ accept: 'image/*' }}
-          helperText="Adicione uma imagem do produto"
-        />
+          <Box sx={{ display: 'flex', justifyContent: 'end', mt: 3, gap: 1 }}>
+            <Button onClick={onClose} color="inherit">
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              disabled={loading || !name.trim()}
+            >
+              {loading
+                ? 'Salvando...'
+                : initialData
+                ? 'Salvar Alterações'
+                : 'Cadastrar'}
+            </Button>
+          </Box>
+        </Box>
       </DialogContent>
-
-      <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          {produto ? 'Salvar Alterações' : 'Salvar Produto'}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }

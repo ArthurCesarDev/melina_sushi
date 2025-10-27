@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Typography,
   Button,
@@ -7,15 +7,19 @@ import {
   IconButton,
   Tooltip,
   Box,
+  CircularProgress,
 } from '@mui/material';
 import { Edit, Trash2, PlusCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
+import { getCategoryById } from '@/services/categoryService';
 import { ProductForm } from '@/components/AdminCategoriasComponents';
 
 export default function CategoriaPage() {
   const { id } = useParams();
   const router = useRouter();
 
+  const [category, setCategory] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
@@ -23,6 +27,21 @@ export default function CategoriaPage() {
     { id: 1, nome: 'X-Salada', preco: 15.9, esgotado: false, promocao: true },
     { id: 2, nome: 'Coca-Cola 350ml', preco: 6.0, esgotado: false, promocao: false },
   ];
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const data = await getCategoryById(id as string);
+        setCategory(data);
+      } catch (err) {
+        console.error('Erro ao buscar categoria:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategory();
+  }, [id]);
 
   const handleEdit = (produto: any) => {
     setEditingProduct(produto);
@@ -33,6 +52,14 @@ export default function CategoriaPage() {
     setEditingProduct(null);
     setShowProductForm(true);
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: 3 }}>
@@ -46,8 +73,9 @@ export default function CategoriaPage() {
       </Button>
 
       <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
-        Produtos da categoria #{id}
+        Categoria {category ? category.name : decodeURIComponent(id as string)}
       </Typography>
+
 
       <Button
         variant="contained"
