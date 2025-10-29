@@ -6,7 +6,7 @@ export default function Header() {
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [3, 4, 5, 6];
+    const diasPermitidos = [4, 5, 6];
     return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
   }, []);
 
