@@ -10,22 +10,6 @@ export const products: Product[] = [
         category: "Pratos Quentes",
     },
     {
-        id: 2,
-        name: "Hot Roll Morango com nutella",
-        description: "8 unidades com pedaços de morango e Nutella, empanadas com arroz e finalizadas no açúcar e canela.",
-        price: 23.99,
-        image: "/nutella.jpeg",
-        category: "Pratos Quentes",
-    },
-    {
-        id: 3,
-        name: "Hot Roll Doce de leite com banana",
-        description: "8 unidades com doce de leite e banana, empanadas com arroz e finalizadas no açúcar e canela",
-        price: 19.99,
-        image: "/",
-        category: "Pratos Quentes",
-    },
-    {
         id: 4,
         name: "Temaki Empanado 120g",
         description: "Clássico temaki grelhado com cream cheese e cebolinha.",
@@ -89,27 +73,14 @@ export const products: Product[] = [
         image: "/sashimi.jpeg",
         category: "Pratos Crus",
     },
-
     {
         id: 12,
         name: "Combinado de Salmão",
-        description: "12 fatias de salmão fresco cortadas na hora.  1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak 2"
-
-        ,
+        description: "12 fatias de salmão fresco cortadas na hora.  1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak 2",
         price: 39.99,
         image: "/combinado.jpeg",
         category: "Pratos Crus",
     },
-    {
-        id: 13,
-        name: "Sunomono 150g",
-        description: "Pepino ralado molho e gergelim",
-        price: 7.99,
-        image: "/sonomono.jpeg",
-        category: "Pratos Crus",
-    },
-
-
 
     {
         id: 99,
@@ -127,5 +98,4 @@ export const products: Product[] = [
             { id: 6, name: "Uramaki Skin", price: 2.50 }
         ],
     }
-
-]
+];
