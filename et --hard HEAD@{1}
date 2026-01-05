@@ -1,0 +1,36 @@
+[33m451c0bb[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/develop[m[33m)[m HEAD@{0}: pull origin develop --rebase (start): checkout 451c0bbe32e5c298185b0d911fb8ec1ac7646677
+[33m2e9ebb0[m[33m ([m[1;32mdevelop[m[33m)[m HEAD@{1}: rebase (abort): returning to refs/heads/develop
+[33m451c0bb[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/develop[m[33m)[m HEAD@{2}: pull origin develop --rebase (start): checkout 451c0bbe32e5c298185b0d911fb8ec1ac7646677
+[33m2e9ebb0[m[33m ([m[1;32mdevelop[m[33m)[m HEAD@{3}: commit: feat: subindo paginação categorias e listagem de item, delet update de categoria
+[33mec08e0a[m HEAD@{4}: commit: feat : adicionando funcionalidade logout
+[33me403398[m HEAD@{5}: commit: feat : adicionando funcionalidade de adicionar categoria update categoria
+[33m1fd24c8[m HEAD@{6}: commit: refactor: atualizando nova extrutura next.
+[33ma752f89[m HEAD@{7}: commit: feat: Restruturando o projeto implimentando boas praticas.
+[33m8e38858[m HEAD@{8}: commit: feat: adicionando dashboard
+[33m8c79440[m HEAD@{9}: commit: feat: adicionando nova extrutura de paginas.
+[33m172491f[m HEAD@{10}: commit: feat: adicionando tela de login, e modelando o sistema para boas praticas.
+[33m82f0ed1[m HEAD@{11}: commit (merge): feat: merge
+[33mae2608a[m HEAD@{12}: checkout: moving from main to develop
+[33m8e67105[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{13}: checkout: moving from develop to main
+[33mae2608a[m HEAD@{14}: commit: feat: adicionando tela de login
+[33m6b3cae6[m HEAD@{15}: checkout: moving from main to develop
+[33m8e67105[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{16}: commit: feat: tirando codigo promocional
+[33mb2f9867[m HEAD@{17}: commit: feat: adicionando promoção adicionais
+[33m98ef540[m HEAD@{18}: commit: feat: adicionando promoção.
+[33md96b115[m HEAD@{19}: commit: refactor: aumentando o tamanho do botão de fechar o carrinho
+[33mb73c2ec[m HEAD@{20}: commit: feat: adicionando novos itens, e centralizando status
+[33m8f89d87[m HEAD@{21}: commit: feat: adicionando campo observações
+[33mb8a626e[m HEAD@{22}: commit: feat: adicionando novos valores e fotos dos pratos
+[33mb511948[m HEAD@{23}: commit: feat: footer adicionado
+[33mb136156[m HEAD@{24}: commit: feat: melhorias do sistema adicionada
+[33m8bf3893[m HEAD@{25}: commit: feat: adicionando logica do carrinho
+[33m6b3cae6[m HEAD@{26}: merge develop: Fast-forward
+[33m7745387[m HEAD@{27}: checkout: moving from develop to main
+[33m6b3cae6[m HEAD@{28}: checkout: moving from develop to develop
+[33m6b3cae6[m HEAD@{29}: commit: feat: adicionando funcionalidade de colocar no carrinho
+[33ma5d53a8[m HEAD@{30}: commit: feat: adicionando nova arquitetura do site.
+[33mef58372[m HEAD@{31}: commit: feat: adicionando carrinho de produtos
+[33m5595616[m HEAD@{32}: commit: feat: adicionando produtos
+[33m7745387[m HEAD@{33}: checkout: moving from main to develop
+[33m7745387[m HEAD@{34}: Branch: renamed refs/heads/master to refs/heads/main
+[33m7745387[m HEAD@{36}: commit (initial): Initial commit from Create Next App

@@ -1,3 +1,5 @@
+// hooks/usecart.ts
+
 "use client"
 import { useState } from "react"
 import { Product } from "@/types/Product"

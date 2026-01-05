@@ -1,9 +1,10 @@
+// dashboard/page.tsx
+
 'use client';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { TrendingUp, Users, ShoppingBag, DollarSign } from 'lucide-react';
 import { styled } from '@mui/system';
 
-// ====== ESTILOS ======
 const PageContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -25,7 +26,6 @@ const KPIIcon = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(1),
 }));
 
-// ====== COMPONENTE ======
 export default function DashboardPage() {
   const kpis = [
     {

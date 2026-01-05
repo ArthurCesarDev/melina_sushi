@@ -1,6 +1,18 @@
 "use client"
+
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
+import {
+  Box,
+  Typography,
+  IconButton,
+  Button,
+  TextField,
+  Divider,
+  Stack,
+} from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
+import DeleteIcon from "@mui/icons-material/Delete"
 import { CartItem } from "@/hooks/useCart"
 
 type Props = {
@@ -12,7 +24,16 @@ type Props = {
   toggle: () => void
 }
 
-export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, toggle }: Props) {
+const payments = ["PIX", "Dinheiro", "Crédito", "Débito"]
+
+export default function CartDrawer({
+  cart,
+  total,
+  onRemove,
+  onFinish,
+  isOpen,
+  toggle,
+}: Props) {
   const [address, setAddress] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -29,7 +50,6 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
     }
 
     onFinish(address, paymentMethod, obs)
-
   }
 
   return (
@@ -39,138 +59,162 @@ export default function CartDrawer({ cart, total, onRemove, onFinish, isOpen, to
           initial={{ x: "100%" }}
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
-          transition={{ type: "spring", stiffness: 100, damping: 15 }}
-          className="fixed top-0 right-0 w-80 h-full bg-white dark:bg-[#1a1a1a] shadow-2xl p-6 z-50 flex flex-col text-gray-900 dark:text-gray-100"
+          transition={{ type: "spring", stiffness: 120, damping: 18 }}
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            width: 360,
+            height: "100vh",
+            zIndex: 1300,
+            background: "inherit",
+          }}
         >
-          <h2 className="text-xl font-bold mb-4">🛒 Seu Pedido</h2>
+          <Box
+            sx={{
+              height: "100%",
+              bgcolor: "background.paper",
+              p: 3,
+              display: "flex",
+              flexDirection: "column",
+              boxShadow: 24,
+            }}
+          >
+            {/* Header */}
+            <Box display="flex" justifyContent="space-between" mb={2}>
+              <Typography variant="h6" fontWeight={800}>
+                🛒 Seu Pedido
+              </Typography>
+              <IconButton onClick={toggle}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
 
-          {cart.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400">Carrinho vazio</p>
-          ) : (
-            <>
-              <ul className="flex-1 overflow-y-auto">
-                {cart.map(p => (
-                  <li
-                    key={p.id}
-                    className="border-b border-gray-200 dark:border-gray-700 py-2 flex justify-between items-start gap-2"
-                  >
-                    <div className="flex-1">
-                      <span className="font-medium text-[#a89050]">{p.name}</span>
-                      {p.description && (
-                        <pre className="text-xs text-gray-500 dark:text-gray-400 whitespace-pre-wrap mt-1">
-                          {p.description}
-                        </pre>
-                      )}
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                        {p.quantity}x R$ {p.price.toFixed(2)}
-                      </p>
-                    </div>
-                    <button
-                      className="text-red-500 hover:text-red-700 text-xl font-bold px-2 py-1 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition"
-                      onClick={() => onRemove(p.id)}
-                    >
-                      ✕
-                    </button>
+            {cart.length === 0 ? (
+              <Typography color="text.secondary">
+                Carrinho vazio
+              </Typography>
+            ) : (
+              <>
+                {/* Lista */}
+                <Box flex={1} overflow="auto">
+                  {cart.map(item => (
+                    <Box key={item.id} mb={2}>
+                      <Box display="flex" justifyContent="space-between">
+                        <Typography fontWeight={600} color="primary">
+                          {item.name}
+                        </Typography>
+                        <IconButton
+                          size="small"
+                          onClick={() => onRemove(item.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
 
-                  </li>
-                ))}
-              </ul>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.quantity}x R$ {item.price.toFixed(2)}
+                      </Typography>
 
-              {/* 🏠 Endereço */}
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Endereço de entrega:
-                </label>
-                <textarea
+                      <Divider sx={{ mt: 1 }} />
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* Endereço */}
+                <TextField
+                  label="Endereço de entrega"
+                  fullWidth
+                  margin="dense"
                   value={address}
                   onChange={e => setAddress(e.target.value)}
-                  rows={2}
-                  placeholder="Ex: Bloco B 3001"
-                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#a89050] bg-gray-50 dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 />
-              </div>
 
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Observações:
-                </label>
-                <textarea
+                {/* Obs */}
+                <TextField
+                  label="Observações"
+                  fullWidth
+                  margin="dense"
                   value={obs}
                   onChange={e => setObs(e.target.value)}
-                  rows={2}
-                  placeholder="Ex: Sem cebola, entregar na portaria..."
-                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#a89050] bg-gray-50 dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 />
-              </div>
 
-              {/* 💳 Pagamento */}
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Forma de pagamento:
-                </label>
-                <select
-                  value={paymentMethod}
-                  onChange={e => setPaymentMethod(e.target.value)}
-                  className="w-full border border-gray-300 dark:border-gray-700 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#a89050] bg-gray-50 dark:bg-[#2a2a2a] text-gray-900 dark:text-gray-100"
-                >
-                  <option value="">Selecione...</option>
-                  <option value="Pix">Pix</option>
-                  <option value="Cartão">Cartão</option>
-                  <option value="Dinheiro">Dinheiro</option>
-                </select>
-              </div>
+                {/* Pagamento */}
+                <Typography fontWeight={600} mt={2}>
+                  Forma de pagamento
+                </Typography>
 
-              {/* 🟢 Botão Finalizar */}
-              <div className="mt-5">
-                <p className="font-semibold mb-2">Total: R$ {total.toFixed(2)}</p>
-                <button
+                <Stack direction="row" spacing={1} flexWrap="wrap" mt={1}>
+                  {payments.map(p => (
+                    <Button
+                      key={p}
+                      variant={paymentMethod === p ? "contained" : "outlined"}
+                      onClick={() => setPaymentMethod(p)}
+                    >
+                      {p}
+                    </Button>
+                  ))}
+                </Stack>
+
+                {/* Total */}
+                <Typography fontWeight={800} mt={3}>
+                  Total: R$ {total.toFixed(2)}
+                </Typography>
+
+                <Button
+                  variant="contained"
+                  fullWidth
+                  sx={{ mt: 2 }}
                   onClick={handleFinish}
-                  className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
                 >
-                  Finalizar Pedido
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* ❌ Fechar Drawer */}
-          <button
-            onClick={toggle}
-            className="absolute top-4 right-4 text-2xl font-bold text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-transform hover:scale-110"
-          >
-            ✕
-          </button>
-
-
-          {/* ⚠️ Modal de erro */}
-          <AnimatePresence>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
-              >
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0.8 }}
-                  className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-2xl p-6 w-72 text-center text-gray-900 dark:text-gray-100"
-                >
-                  <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-3">
-                    ⚠️ Atenção
-                  </h3>
-                  <p className="text-sm mb-4">{error}</p>
-                  <button
-                    onClick={() => setError(null)}
-                    className="bg-[#a89050] text-white px-4 py-2 rounded-lg hover:opacity-90"
-                  >
-                    OK
-                  </button>
-                </motion.div>
-              </motion.div>
+                  Confirmar Pedido
+                </Button>
+              </>
             )}
-          </AnimatePresence>
+
+            {/* Modal de erro */}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    background: "rgba(0,0,0,0.5)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 2000,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: "background.paper",
+                      p: 3,
+                      borderRadius: 3,
+                      textAlign: "center",
+                      width: 280,
+                    }}
+                  >
+                    <Typography color="error" fontWeight={700} mb={1}>
+                      ⚠️ Atenção
+                    </Typography>
+                    <Typography variant="body2" mb={2}>
+                      {error}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={() => setError(null)}
+                    >
+                      OK
+                    </Button>
+                  </Box>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Box>
         </motion.div>
       )}
     </AnimatePresence>

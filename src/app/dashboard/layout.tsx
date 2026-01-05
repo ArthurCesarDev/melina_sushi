@@ -1,56 +1,83 @@
+// src/app/dashboard/layout.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Box, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import Sidebar from '@/components/Sidebar';
-import DashboardHeader from '@/components/DashboardHeader';
-import { Container, Content } from '@/app/dashboard/categorias/components/styles';
-import { Box } from '@mui/material';
+import Header from '@/components/HeaderComponents';
+import { useRouter } from 'next/navigation';
+import { checkAdminSession } from '@/services/authAdmin';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-export default function DashboardLayout({
+export default function CardapioLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Começa fechado por padrão
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
 
-  // Detecta se é mobile
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [authChecking, setAuthChecking] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
-  // 🔥 Abre automaticamente no desktop, fecha no mobile
+  const drawerExpanded = 230;
+  const drawerCollapsed = 70;
+  const leftOffset = isMobile
+    ? 0
+    : collapsed
+    ? drawerCollapsed
+    : drawerExpanded;
+
   useEffect(() => {
-    setIsSidebarOpen(!isMobile);
-  }, [isMobile]);
+    const run = async () => {
+      const valid = await checkAdminSession();
+
+      if (!valid) {
+        router.push('/login');
+        return;
+      }
+
+      setAuthChecking(false);
+    };
+
+    run();
+  }, [router]);
+
+  if (authChecking) return null;
 
   return (
-    <Container>
-      {/* Sidebar */}
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-      />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ display: 'flex' }}>
+        <Header
+          onMenuClick={() => setOpen(true)}
+          leftOffset={leftOffset}
+        />
 
-      {/* Conteúdo principal */}
-      <Content
-        sx={{
-          marginLeft: isMobile ? 0 : isSidebarOpen ? '230px' : '70px',
-          transition: 'margin-left 0.3s ease',
-          minHeight: '100vh',
-          overflowX: 'hidden',
-          backgroundColor: 'background.default',
-        }}
-      >
-        {/* Header controla o menu no mobile */}
-        <DashboardHeader onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <Sidebar
+          open={isMobile ? open : true}
+          onClose={() => setOpen(false)}
+          variant={isMobile ? 'temporary' : 'permanent'}
+          collapsed={!isMobile && collapsed}
+          onToggleCollapse={() => setCollapsed(!collapsed)}
+        />
 
-        <Box sx={{ padding: '2rem' }}>{children}</Box>
-      </Content>
-    </Container>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            mt: 8,
+            ml: { xs: 0, sm: `${leftOffset}px` },
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
+          {children}
+        </Box>
+      </Box>
+    </LocalizationProvider>
   );
 }

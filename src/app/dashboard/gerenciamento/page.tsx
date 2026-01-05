@@ -1,32 +1,81 @@
 'use client';
+
 import { Typography, Button, Grid } from '@mui/material';
-import { useState } from 'react';
-import LogoUploader from './components/LogoUploader';
-import BannerUploader from './components/BannerUploader';
-import EmpresaForm from './components/EmpresaForm';
-import HorariosForm from './components/HorariosForm';
+import {
+  LogoUploader,
+  BannerUploader,
+  EmpresaForm,
+  HorariosForm,
+} from '@/components/AdminGerenciamentoComponents';
+import { useStoreProfile } from '@/hooks/useStoreProfile';
+import { useToast } from '@/context/ToastContext';
 
 export default function GerenciamentoPage() {
-  const [empresa, setEmpresa] = useState({
-    nome: 'Barbearia do Ricardo',
-    descricao: 'A melhor experiência em cortes e cuidados masculinos.',
-    logo: '',
-    banner: '',
-    horarios: [
-      { dia: 'Segunda', ativo: true, abertura: '09:00', fechamento: '19:00' },
-      { dia: 'Terça', ativo: true, abertura: '09:00', fechamento: '19:00' },
-      { dia: 'Quarta', ativo: true, abertura: '09:00', fechamento: '19:00' },
-      { dia: 'Quinta', ativo: true, abertura: '09:00', fechamento: '19:00' },
-      { dia: 'Sexta', ativo: true, abertura: '09:00', fechamento: '19:00' },
-      { dia: 'Sábado', ativo: false, abertura: '09:00', fechamento: '14:00' },
-      { dia: 'Domingo', ativo: false, abertura: '', fechamento: '' },
-    ],
-  });
+  const { empresa, setEmpresa, hasProfile, loading, save } = useStoreProfile();
+  const { showToast } = useToast();
+
+  if (loading) return null;
+
+  const handleSave = async () => {
+  try {
+    if (empresa.logoFile) {
+      const formData = new FormData();
+      formData.append('file', empresa.logoFile);
+
+      if (empresa.logo) {
+        const oldClean = String(empresa.logo).split('?')[0];
+        formData.append('oldImageUrl', oldClean);
+      }
+
+      const res = await fetch('/api/logo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Erro ao enviar logo');
+      }
+
+      empresa.logo = data.fileUrl;
+    }
+
+    if (empresa.bannerFile) {
+      const formData = new FormData();
+      formData.append('file', empresa.bannerFile);
+
+      if (empresa.banner) {
+        const oldClean = String(empresa.banner).split('?')[0];
+        formData.append('oldImageUrl', oldClean);
+      }
+
+      const res = await fetch('/api/banner', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Erro ao enviar banner');
+      }
+
+      empresa.banner = data.fileUrl;
+    }
+
+    const response = await save();
+    showToast(
+      response?.message || 'Operação realizada com sucesso.',
+      'success'
+    );
+  } catch (err: any) {
+    showToast(err?.message || 'Erro ao salvar informações', 'error');
+  }
+};
 
   return (
     <>
-      <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
-        Gerenciamento da Empresa ⚙️
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 3 }}>
+        Gerenciamento
       </Typography>
 
       <Grid container spacing={3}>
@@ -47,8 +96,12 @@ export default function GerenciamentoPage() {
         </Grid>
 
         <Grid>
-          <Button variant="contained" color="primary" size="large">
-            Salvar Alterações
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleSave}
+          >
+            {hasProfile ? 'Atualizar Perfil' : 'Criar Perfil'}
           </Button>
         </Grid>
       </Grid>
