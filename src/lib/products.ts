@@ -77,17 +77,9 @@ export const products: Product[] = [
         id: 12,
         name: "Combinado de Salmão",
         description:
-            "12 fatias de salmão fresco cortadas na hora. 1 temaki 70g, 2 Jó, 2 uramak Filadélfia, 3 sashimi salmão, 2 Niguiri salmão, 2 Hossomak",
+            "12 peças. 1 temaki 70g, 2 Jó, 2 uramak filadélfia, 3 sashimi, 2 Niguiri , 2 Hossomak",
         price: 39.99,
         image: "/combinado.jpeg",
-        category: "Pratos Crus",
-    },
-    {
-        id: 13,
-        name: "Sunomono 100g",
-        description: "Pepino ralado molho e gergelim",
-        price: 7.99,
-        image: "/sonomono.jpeg",
         category: "Pratos Crus",
     },
     {
