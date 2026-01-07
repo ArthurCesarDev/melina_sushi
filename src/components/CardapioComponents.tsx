@@ -23,7 +23,7 @@ export default function CardapioComponents() {
     const day = now.getDay();
     const hour = now.getHours();
     const diasPermitidos = [3, 4, 5, 6];
-    return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
+    return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
   }, []);
 
   // ✅ FINALIZAR -> WHATSAPP
@@ -39,7 +39,7 @@ export default function CardapioComponents() {
       .map((item) => {
         let block = `*${item.name}*\n`;
 
-        // 🔥 SEMPRE mostra quantidade + subtotal juntos
+        // 🔥 quantidade + subtotal
         block += `${item.quantity}x • Subtotal: R$ ${(item.price * item.quantity).toFixed(2)}\n`;
 
         // 🔥 descrição (normal ou combo)
@@ -55,17 +55,25 @@ export default function CardapioComponents() {
     message += `\n🏠 *Endereço:* ${address}`;
     message += `\n💳 *Pagamento:* ${paymentMethod}`;
 
+    // ✅ SE FOR PIX, ADICIONA OS DADOS
+    if (paymentMethod.toLowerCase().includes("pix")) {
+      message += `\n\n🔑 *Dados para PIX:*`;
+      message += `\n📱 *Chave:* 11988536110`;
+      message += `\n👤 *Nome:* Arthur Cesar Santos de Araujo`;
+    }
+
     if (obs.trim()) {
       message += `\n📝 *Observações:* ${obs}`;
     }
 
-    const phone = "5511988536110"; // SEU NÚMERO
+    const phone = "5511988536110"; 
 
     window.open(
       `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
       "_blank"
     );
   };
+
 
   return (
     <>
@@ -132,7 +140,7 @@ export default function CardapioComponents() {
                     )}
 
                     <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-200">
-                      🕒 18h às 22h
+                      🕒 19h às 22h
                     </span>
                   </div>
                 </div>
@@ -143,10 +151,10 @@ export default function CardapioComponents() {
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
                   <p className="text-sm text-gray-200 mt-1">
-                    Qua a Sáb • 18h às 22h
+                    Qua a Sáb • 19h às 22h
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    Pedidos pelo WhatsApp
+                    Cardápio virtual
                   </p>
                 </div>
 

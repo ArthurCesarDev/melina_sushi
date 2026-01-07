@@ -7,7 +7,7 @@ export default function Footer() {
           <p className="text-sm">
             📍 <span className="font-semibold text-white">Melina Sushi</span><br />
             Rua Manoel Soares de Oliveira 51 — Itacolomi, São Paulo/SP<br />
-            Atendimento: Qua a Sáb, 18h às 22h
+            Atendimento: Qua a Sáb, 19h às 22h
           </p>
         </div>
 

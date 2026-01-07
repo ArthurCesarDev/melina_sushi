@@ -1,4 +1,5 @@
 "use client";
+
 import type { Product } from "@/types/Product";
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,6 +20,9 @@ export default function ComboModal({
   const [items, setItems] = useState<
     { name: string; price: number; quantity: number }[]
   >([]);
+
+  // ✅ dica visual: começa aparecendo, some quando rolar
+  const [showScrollHint, setShowScrollHint] = useState(true);
 
   const totalPrice = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
 
@@ -43,7 +47,7 @@ export default function ComboModal({
       clone.style.transition = "all 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
       clone.style.borderRadius = "12px";
       clone.style.overflow = "hidden";
-      clone.style.opacity = "1";
+      clone.style.opacity =_toggle("1", "1");
       document.body.appendChild(clone);
 
       // movimento até o carrinho flutuante
@@ -86,7 +90,10 @@ export default function ComboModal({
           </button>
 
           {/* Imagem e título */}
-          <div ref={comboImgRef} className="relative w-full h-32 rounded-xl overflow-hidden mb-4">
+          <div
+            ref={comboImgRef}
+            className="relative w-full h-32 rounded-xl overflow-hidden mb-4"
+          >
             <Image
               src={combo.image || "/combo.jpg"}
               alt={combo.name}
@@ -102,65 +109,86 @@ export default function ComboModal({
             {combo.description}
           </p>
 
-          {/* Opções do combo */}
-          <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
-            {combo.options?.map((opt) => {
-              const selected = items.find((i) => i.name === opt.name);
-              const quantity = selected?.quantity ?? 0;
+          {/* Opções do combo + dica */}
+          <div className="relative">
+            <div
+              onScroll={() => setShowScrollHint(false)}
+              className="space-y-3 max-h-56 overflow-y-auto pr-1 pb-10"
+            >
+              {combo.options?.map((opt) => {
+                const selected = items.find((i) => i.name === opt.name);
+                const quantity = selected?.quantity ?? 0;
 
-              return (
-                <div
-                  key={opt.name}
-                  className="flex items-center justify-between bg-white/80 border border-gray-100 rounded-lg p-3 shadow-sm hover:shadow-md transition-all"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{opt.name}</span>
-                    <span className="text-xs text-gray-500">
-                      R$ {opt.price.toFixed(2)}
-                    </span>
+                return (
+                  <div
+                    key={opt.name}
+                    className="flex items-center justify-between bg-white/80 border border-gray-100 rounded-lg p-3 shadow-sm hover:shadow-md transition-all"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-medium">{opt.name}</span>
+                      <span className="text-xs text-gray-500">
+                        R$ {opt.price.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          setItems((prev) =>
+                            prev
+                              .map((i) =>
+                                i.name === opt.name
+                                  ? { ...i, quantity: i.quantity - 1 }
+                                  : i
+                              )
+                              .filter((i) => i.quantity > 0)
+                          )
+                        }
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-[#FF5722] to-[#FFC107] text-white font-bold shadow hover:shadow-md transition-all"
+                      >
+                        −
+                      </button>
+
+                      <span className="font-semibold w-5 text-center text-gray-700">
+                        {quantity}
+                      </span>
+
+                      <button
+                        onClick={() =>
+                          setItems((prev) => [
+                            ...prev.filter((i) => i.name !== opt.name),
+                            { ...opt, quantity: quantity + 1 },
+                          ])
+                        }
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-[#FF5722] to-[#FFC107] text-white font-bold shadow hover:shadow-md transition-all"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() =>
-                        setItems((prev) =>
-                          prev
-                            .map((i) =>
-                              i.name === opt.name
-                                ? { ...i, quantity: i.quantity - 1 }
-                                : i
-                            )
-                            .filter((i) => i.quantity > 0)
-                        )
-                      }
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-[#FF5722] to-[#FFC107] text-white font-bold shadow hover:shadow-md transition-all"
-                    >
-                      −
-                    </button>
-                    <span className="font-semibold w-5 text-center text-gray-700">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() =>
-                        setItems((prev) => [
-                          ...prev.filter((i) => i.name !== opt.name),
-                          { ...opt, quantity: quantity + 1 },
-                        ])
-                      }
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-[#FF5722] to-[#FFC107] text-white font-bold shadow hover:shadow-md transition-all"
-                    >
-                      +
-                    </button>
+            {/* ✅ DICA VISUAL (sempre aparece ao abrir / some ao rolar) */}
+            {showScrollHint && (
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-[9999]">
+                <div className="h-14 bg-gradient-to-t from-white via-white/90 to-transparent rounded-b-2xl" />
+                <div className="absolute bottom-2 left-0 right-0 flex justify-center">
+                  <div className="px-3 py-1 rounded-full bg-black/70 text-white text-xs flex items-center gap-2">
+                    <span>Role para ver mais opções</span>
+                    <span className="animate-bounce">↓</span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            )}
           </div>
 
           {/* Total e ações */}
           <div className="mt-5 border-t border-gray-200 pt-3">
             <p className="font-semibold text-lg text-gray-800 text-right mb-3">
-              Total: <span className="text-[#FF5722]">R$ {totalPrice.toFixed(2)}</span>
+              Total:{" "}
+              <span className="text-[#FF5722]">R$ {totalPrice.toFixed(2)}</span>
             </p>
 
             <motion.button
@@ -183,4 +211,9 @@ export default function ComboModal({
       </motion.div>
     </AnimatePresence>
   );
+}
+
+// helper para evitar lint chato (pode remover se quiser)
+function _toggle(a: string, b: string) {
+  return a || b;
 }
