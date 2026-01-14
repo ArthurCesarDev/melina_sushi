@@ -53,7 +53,7 @@ export const products: Product[] = [
         id: 9,
         name: "Niguiri Jô",
         description: "8 unidades com salmão, cream cheese, arroz e cebolinha.",
-        price: 22.99,
+        price: 23.99,
         image: "/jo.jpeg",
         category: "Pratos Crus",
     },
@@ -91,7 +91,7 @@ export const products: Product[] = [
         category: "Combos",
         options: [
             { id: 1, name: "Sashimi", price: 2.78 },
-            { id: 2, name: "Niguiri Jô", price: 2.88 },
+            { id: 2, name: "Niguiri Jô", price: 2.99 },
             { id: 3, name: "Uramaki Filadélfia", price: 2.5 },
             { id: 4, name: "Hossomaki", price: 1.77 },
             { id: 5, name: "Niguiri Salmão", price: 3.33 },

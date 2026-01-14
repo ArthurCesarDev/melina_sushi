@@ -165,9 +165,6 @@ export default function CardapioComponents() {
                       💳 Crédito
                     </span>
                     <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-gray-200">
-                      💳 Débito
-                    </span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-gray-200">
                       💸 Pix
                     </span>
                     <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-gray-200">
