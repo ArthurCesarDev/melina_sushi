@@ -157,7 +157,7 @@ export default function CartDrawer({
                       { id: "pix", label: "PIX" },
                       { id: "dinheiro", label: "Dinheiro" },
                       { id: "credito", label: "Crédito" },
-                      { id: "debito", label: "Débito" },
+                     
                     ].map((opt) => (
                       <button
                         key={opt.id}
