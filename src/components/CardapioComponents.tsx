@@ -9,7 +9,8 @@ import ProductCard from "@/components/UI/ProductCard";
 import ComboModal from "@/components/UI/ComboModal";
 import CartDrawer from "@/components/UI/CartDrawer";
 import FloatingCartButton from "@/components/UI/FloatingCartButton";
-
+import AuthModal from "@/components/UI/AuthModal";
+import { checkUserSession } from "@/services/authClient";
 import type { Product } from "@/types/Product";
 
 export default function CardapioComponents() {
@@ -17,7 +18,8 @@ export default function CardapioComponents() {
 
   const [selectedCombo, setSelectedCombo] = useState<Product | null>(null);
   const [isCartOpen, setCartOpen] = useState(false);
-
+  const [showAuth, setShowAuth] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
   const isOpenNow = useMemo(() => {
     const now = new Date();
     const day = now.getDay();
@@ -25,8 +27,6 @@ export default function CardapioComponents() {
     const diasPermitidos = [3, 4, 5, 6];
     return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
   }, []);
-
-  // ✅ FINALIZAR -> WHATSAPP
   const handleFinish = (address: string, paymentMethod: string, obs: string) => {
     if (!address.trim()) {
       alert("🏠 Informe o endereço de entrega.");
@@ -66,7 +66,7 @@ export default function CardapioComponents() {
       message += `\n📝 *Observações:* ${obs}`;
     }
 
-    const phone = "5511988536110"; 
+    const phone = "5511988536110";
 
     window.open(
       `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
@@ -230,7 +230,7 @@ export default function CardapioComponents() {
         onClose={() => setCartOpen(false)}
         onRemove={removeFromCart}
         onDecrease={decreaseFromCart}
-        onFinish={handleFinish} // ✅ PASSANDO AQUI
+        onFinish={handleFinish}
       />
 
       {/* COMBO */}

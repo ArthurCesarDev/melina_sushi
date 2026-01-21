@@ -73,8 +73,16 @@ export const products: Product[] = [
         image: "/sashimi.jpeg",
         category: "Pratos Crus",
     },
-    {
+     {
         id: 12,
+        name: "Sunomono 100g",
+        description: "Pepino ralado com molho",
+        price: 7.99,
+        image: "/sonomono.jpeg",
+        category: "Pratos Crus",
+    },
+    {
+        id: 13,
         name: "Combinado de Salmão",
         description:
             "12 peças. 1 temaki 70g, 2 Jó, 2 uramak filadélfia, 3 sashimi, 2 Niguiri , 2 Hossomak",
