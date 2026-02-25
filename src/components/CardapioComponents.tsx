@@ -12,7 +12,7 @@ import FloatingCartButton from "@/components/UI/FloatingCartButton";
 import AuthModal from "@/components/UI/AuthModal";
 import { checkUserSession } from "@/services/authClient";
 import type { Product } from "@/types/Product";
-
+import { AnimatePresence, motion } from "framer-motion";
 export default function CardapioComponents() {
   const { cart, addToCart, removeFromCart, decreaseFromCart, total } = useCart();
 
@@ -20,11 +20,16 @@ export default function CardapioComponents() {
   const [isCartOpen, setCartOpen] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const isOpenNow = useMemo(() => {
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [3, 4, 5, 6];
+    const diasPermitidos = [4, 5, 6];
+
+
+
+
     return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
   }, []);
   const handleFinish = (address: string, paymentMethod: string, obs: string) => {
@@ -32,6 +37,7 @@ export default function CardapioComponents() {
       alert("🏠 Informe o endereço de entrega.");
       return;
     }
+
 
     let message = `🍣 *Novo Pedido - Melina Sushi*\n\n`;
 
@@ -151,7 +157,7 @@ export default function CardapioComponents() {
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
                   <p className="text-sm text-gray-200 mt-1">
-                    Qua a Sáb • 19h às 22h
+                    Quin a Sáb • 19h às 22h
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
                     Cardápio virtual
@@ -208,7 +214,13 @@ export default function CardapioComponents() {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onAdd={addToCart}
+                    onAdd={(p) => {
+                      if (!isOpenNow) {
+                        setError("⏰ Estamos fechados. Aberto de quinta a sábado, das 19h às 22h.");
+                        return;
+                      }
+                      addToCart(p);
+                    }}
                     onOpenCombo={setSelectedCombo}
                   />
                 ))}
@@ -248,6 +260,49 @@ export default function CardapioComponents() {
           }}
         />
       )}
+      <AnimatePresence>
+  {error && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4"
+      onClick={() => setError(null)}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 18 }}
+        className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl border border-orange-100"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-lg font-extrabold text-[#FF5722]">Atenção</p>
+            <p className="text-sm text-gray-700 mt-1">{error}</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="text-gray-400 hover:text-gray-600 text-lg"
+          >
+            ✕
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setError(null)}
+          className="mt-4 w-full py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-[#FF5722] to-[#FFC107] shadow-md hover:shadow-lg transition-all"
+        >
+          OK
+        </button>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
     </>
   );
 }

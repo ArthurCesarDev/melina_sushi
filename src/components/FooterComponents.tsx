@@ -28,7 +28,7 @@ export default function Footer() {
 
               <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-200">
                 <span className="h-2 w-2 rounded-full bg-green-500" />
-                Atendimento: Qua a Sáb • 19h às 22h
+                Atendimento: Quin a Sáb • 19h às 22h
               </span>
             </div>
 
