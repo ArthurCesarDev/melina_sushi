@@ -1,7 +1,7 @@
 // components/CardapioComponents.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import {useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { products } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
@@ -21,17 +21,28 @@ export default function CardapioComponents() {
   const [showAuth, setShowAuth] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const isOpenNow = useMemo(() => {
+
+  
+  const checkIsOpenNow = () => {
     const now = new Date();
-    const day = now.getDay();
+    const day = now.getDay(); // 0 = dom, 4 = qui
     const hour = now.getHours();
-    const diasPermitidos = [4, 5, 6];
-
-
-
-
+    const diasPermitidos = [4, 5, 6]; // qui, sex, sáb
+  
     return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
+  };
+  
+  const [isOpenNow, setIsOpenNow] = useState(checkIsOpenNow());
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsOpenNow(checkIsOpenNow());
+    }, 60_000); // atualiza a cada 1 minuto
+  
+    return () => clearInterval(interval);
   }, []);
+
+
   const handleFinish = (address: string, paymentMethod: string, obs: string) => {
     if (!address.trim()) {
       alert("🏠 Informe o endereço de entrega.");
