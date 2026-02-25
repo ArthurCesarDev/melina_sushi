@@ -221,7 +221,13 @@ export default function CardapioComponents() {
                       }
                       addToCart(p);
                     }}
-                    onOpenCombo={setSelectedCombo}
+                    onOpenCombo={(combo) => {
+                      if (!isOpenNow) {
+                        setError("⏰ Estamos fechados. Aberto de quinta a sábado, das 19h às 22h.");
+                        return;
+                      }
+                      setSelectedCombo(combo);
+                    }}
                   />
                 ))}
             </div>
