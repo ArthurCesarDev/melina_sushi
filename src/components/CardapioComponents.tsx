@@ -27,7 +27,7 @@ export default function CardapioComponents() {
     const now = new Date();
     const day = now.getDay(); // 0 = dom, 4 = qui
     const hour = now.getHours();
-    const diasPermitidos = [4, 5, 6]; // qui, sex, sáb
+    const diasPermitidos = [3, 4, 5, 6]; // qui, sex, sáb
   
     return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
   };
@@ -168,7 +168,7 @@ export default function CardapioComponents() {
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
                   <p className="text-sm text-gray-200 mt-1">
-                    Quin a Sáb • 19h às 22h
+                    Qua a Sáb • 19h às 22h
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
                     Cardápio virtual
@@ -227,14 +227,14 @@ export default function CardapioComponents() {
                     product={product}
                     onAdd={(p) => {
                       if (!isOpenNow) {
-                        setError("⏰ Estamos fechados. Aberto de quinta a sábado, das 19h às 22h.");
+                        setError("⏰ Estamos fechados. Aberto de Quarta a sábado, das 19h às 22h.");
                         return;
                       }
                       addToCart(p);
                     }}
                     onOpenCombo={(combo) => {
                       if (!isOpenNow) {
-                        setError("⏰ Estamos fechados. Aberto de quinta a sábado, das 19h às 22h.");
+                        setError("⏰ Estamos fechados. Aberto de Quarta a sábado, das 19h às 22h.");
                         return;
                       }
                       setSelectedCombo(combo);
