@@ -16,6 +16,7 @@ export default function CartDrawer({
   const [obs, setObs] = useState("");
   const [address, setAddress] = useState("");
   const [payment, setPayment] = useState("pix");
+  const [molho, setMolho] = useState("");
 
   // ✅ modal bonitinho de erro
   const [error, setError] = useState<string | null>(null);
@@ -26,13 +27,18 @@ export default function CartDrawer({
       return;
     }
 
+    if (!molho) {
+      setError("🍜 Selecione o molho.");
+      return;
+    }
+
     if (total < MIN_ORDER) {
       setError(`🧾 Pedido mínimo é R$ ${MIN_ORDER.toFixed(2)}.`);
       return;
     }
 
     // ok -> manda pro WhatsApp
-    onFinish(address, payment.toUpperCase(), obs);
+    onFinish(address, payment.toUpperCase(), obs, molho);
   };
 
   return (
@@ -83,7 +89,6 @@ export default function CartDrawer({
                     <div className="flex-1 pr-3">
                       <p className="font-semibold text-gray-800">{item.name}</p>
 
-                      {/* ✅ mostra quantidade sem botões */}
                       <p className="text-sm text-gray-700 font-medium">
                         {item.quantity}x • Subtotal: R$ {(item.price * item.quantity).toFixed(2)}
                       </p>
@@ -147,6 +152,33 @@ export default function CartDrawer({
                   />
                 </div>
 
+                {/* Molho */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Selecione o molho 🍜
+                  </label>
+                  <div className="flex gap-2 flex-wrap">
+                    {[
+                      { id: "shoyu", label: "Shoyu" },
+                      { id: "tare", label: "Tare" },
+                      { id: "nenhum", label: "Nenhum" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setMolho(opt.id)}
+                        className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-all ${
+                          molho === opt.id
+                            ? "bg-gradient-to-r from-[#FF5722] to-[#FFC107] text-white shadow-md"
+                            : "bg-white text-gray-600 border-gray-200 hover:border-[#FF5722]"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Pagamento */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -157,7 +189,6 @@ export default function CartDrawer({
                       { id: "pix", label: "PIX" },
                       { id: "dinheiro", label: "Dinheiro" },
                       { id: "credito", label: "Crédito" },
-                     
                     ].map((opt) => (
                       <button
                         key={opt.id}
@@ -185,7 +216,6 @@ export default function CartDrawer({
                   <span>R$ {total.toFixed(2)}</span>
                 </p>
 
-                {/* aviso pedido mínimo (opcional, ajuda o cliente) */}
                 {total < MIN_ORDER && (
                   <p className="text-xs text-gray-500 mb-2">
                     Pedido mínimo: R$ {MIN_ORDER.toFixed(2)}

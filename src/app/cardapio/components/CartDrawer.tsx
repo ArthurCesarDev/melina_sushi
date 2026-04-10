@@ -19,12 +19,13 @@ type Props = {
   cart: CartItem[]
   total: number
   onRemove: (id: number) => void
-  onFinish: (address: string, paymentMethod: string, obs: string) => void
+  onFinish: (address: string, paymentMethod: string, obs: string, molho: string) => void
   isOpen: boolean
   toggle: () => void
 }
 
 const payments = ["PIX", "Dinheiro", "Crédito", "Débito"]
+const molhos = ["Shoyu", "Tare", "Nenhum"]
 
 export default function CartDrawer({
   cart,
@@ -38,10 +39,15 @@ export default function CartDrawer({
   const [paymentMethod, setPaymentMethod] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [obs, setObs] = useState("")
+  const [molho, setMolho] = useState("")
 
   const handleFinish = () => {
     if (!address.trim()) {
       setError("🏠 Por favor, insira o endereço de entrega.")
+      return
+    }
+    if (!molho) {
+      setError("🍜 Selecione o molho.")
       return
     }
     if (!paymentMethod) {
@@ -49,7 +55,7 @@ export default function CartDrawer({
       return
     }
 
-    onFinish(address, paymentMethod, obs)
+    onFinish(address, paymentMethod, obs, molho)
   }
 
   return (
@@ -138,6 +144,23 @@ export default function CartDrawer({
                   value={obs}
                   onChange={e => setObs(e.target.value)}
                 />
+
+                {/* Molho */}
+                <Typography fontWeight={600} mt={2}>
+                  Selecione o molho
+                </Typography>
+
+                <Stack direction="row" spacing={1} flexWrap="wrap" mt={1}>
+                  {molhos.map(m => (
+                    <Button
+                      key={m}
+                      variant={molho === m ? "contained" : "outlined"}
+                      onClick={() => setMolho(m)}
+                    >
+                      {m}
+                    </Button>
+                  ))}
+                </Stack>
 
                 {/* Pagamento */}
                 <Typography fontWeight={600} mt={2}>

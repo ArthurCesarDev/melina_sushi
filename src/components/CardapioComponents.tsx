@@ -29,7 +29,7 @@ export default function CardapioComponents() {
     const hour = now.getHours();
     const diasPermitidos = [3, 4, 5, 6]; // qui, sex, sáb
   
-    return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
+    return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
   };
   
   const [isOpenNow, setIsOpenNow] = useState(checkIsOpenNow());
@@ -43,7 +43,7 @@ export default function CardapioComponents() {
   }, []);
 
 
-  const handleFinish = (address: string, paymentMethod: string, obs: string) => {
+  const handleFinish = (address: string, paymentMethod: string, obs: string, molho: string) => {
     if (!address.trim()) {
       alert("🏠 Informe o endereço de entrega.");
       return;
@@ -71,6 +71,7 @@ export default function CardapioComponents() {
     message += `\n💰 *Total:* R$ ${total.toFixed(2)}`;
     message += `\n🏠 *Endereço:* ${address}`;
     message += `\n💳 *Pagamento:* ${paymentMethod}`;
+    message += `\n🍜 *Molho:* ${molho}`;
 
     // ✅ SE FOR PIX, ADICIONA OS DADOS
     if (paymentMethod.toLowerCase().includes("pix")) {
