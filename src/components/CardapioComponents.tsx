@@ -25,9 +25,9 @@ export default function CardapioComponents() {
 
   const checkIsOpenNow = () => {
     const now = new Date();
-    const day = now.getDay(); 
+    const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [0]; 
+    const diasPermitidos = [3, 4, 5, 6];
 
     return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
   };
@@ -169,10 +169,7 @@ export default function CardapioComponents() {
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
                   <p className="text-sm text-gray-200 mt-1">
-                  • Atendimento: Informamos que estaremos fechados nesta semana.
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Devido a evento 
+                    • Atendimento de quarta a sábado.
                   </p>
                 </div>
 
