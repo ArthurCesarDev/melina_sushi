@@ -27,7 +27,7 @@ export default function CardapioComponents() {
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [ 4, 5, 6];
+    const diasPermitidos = [ 4, 6];
 
     return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
   };
