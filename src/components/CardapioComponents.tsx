@@ -225,7 +225,7 @@ export default function CardapioComponents() {
                     product={product}
                     onAdd={(p) => {
                       if (!isOpenNow) {
-                        setError("⏰ Estamos fechados. Aberto de Quinta a sábado, das 19h às 22h.");
+                        setError("📢 Hoje (sexta-feira) estaremos fechados devido a um evento. Retornaremos amanhã, sábado (23/05).");
                         return;
                       }
                       addToCart(p);
