@@ -27,7 +27,7 @@ export default function CardapioComponents() {
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [ 4, 6];
+    const diasPermitidos = [ 5, 6];
 
     return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
   };
@@ -225,7 +225,7 @@ export default function CardapioComponents() {
                     product={product}
                     onAdd={(p) => {
                       if (!isOpenNow) {
-                        setError("📢 Hoje (sexta-feira) estaremos fechados devido a um evento. Retornaremos amanhã, sábado (23/05).");
+                        setError("📢 ⏰ Estamos fechados. Aberto de sexta e sábado, das 19h às 22h.");
                         return;
                       }
                       addToCart(p);
