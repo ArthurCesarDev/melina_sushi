@@ -27,7 +27,7 @@ export default function CardapioComponents() {
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [ 4,5,6];
+    const diasPermitidos = [ 4, 6];
 
     return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
   };
@@ -169,7 +169,7 @@ export default function CardapioComponents() {
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
                   <p className="text-sm text-gray-200 mt-1">
-                    • Atendimento de quinta a sábado.
+                    • Atendimento de sexta e sábado.
                   </p>
                 </div>
 
@@ -225,14 +225,14 @@ export default function CardapioComponents() {
                     product={product}
                     onAdd={(p) => {
                       if (!isOpenNow) {
-                        setError("📢 Fechado!");
+                        setError("📢 Hoje (sexta-feira) estaremos fechados devido a um evento. Retornaremos amanhã, sábado (23/05).");
                         return;
                       }
                       addToCart(p);
                     }}
                     onOpenCombo={(combo) => {
                       if (!isOpenNow) {
-                        setError("⏰ Estamos fechados. Aberto de quinta sábado, das 19h às 22h.");
+                        setError("⏰ Estamos fechados. Aberto de sexta a sábado, das 19h às 22h.");
                         return;
                       }
                       setSelectedCombo(combo);
