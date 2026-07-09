@@ -1,10 +1,11 @@
 // context/Cartcontext.tsx
 
 "use client"
-import { createContext, useContext, useState } from "react"
-import { Product } from "@/types/Product"
+import { createContext, useContext, useMemo, useReducer } from "react"
+import type { Product } from "@/features/menu/domain/product"
+import { calculateCartTotal, cartReducer, type CartItem } from "@/features/cart/domain/cart"
 
-export type CartItem = Product & { quantity: number }
+export type { CartItem } from "@/features/cart/domain/cart"
 
 type CartContextType = {
   cart: CartItem[]
@@ -17,35 +18,12 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([])
-
-  const addToCart = (product: Product) => {
-    setCart(prev => {
-      const existing = prev.find(p => p.id === product.id)
-      if (existing) {
-        return prev.map(p =>
-          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
-        )
-      }
-      return [...prev, { ...product, quantity: 1 }]
-    })
-  }
-
-  const decreaseFromCart = (id: number) => {
-    setCart(prev =>
-      prev
-        .map(p =>
-          p.id === id ? { ...p, quantity: p.quantity - 1 } : p
-        )
-        .filter(p => p.quantity > 0)
-    )
-  }
-
-  const removeFromCart = (id: number) => {
-    setCart(prev => prev.filter(p => p.id !== id))
-  }
-
-  const total = cart.reduce((acc, p) => acc + p.price * p.quantity, 0)
+  const [state, dispatch] = useReducer(cartReducer, { items: [] })
+  const cart = state.items
+  const total = useMemo(() => calculateCartTotal(cart), [cart])
+  const addToCart = (product: Product) => dispatch({ type: "add", product })
+  const decreaseFromCart = (productId: number) => dispatch({ type: "decrease", productId })
+  const removeFromCart = (productId: number) => dispatch({ type: "remove", productId })
 
   return (
     <CartContext.Provider

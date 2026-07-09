@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { products } from "@/lib/products";
+import { MENU_CATEGORIES, products } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
 import ProductCard from "@/components/UI/ProductCard";
 import ComboModal from "@/components/UI/ComboModal";
@@ -27,9 +27,9 @@ export default function CardapioComponents() {
     const now = new Date();
     const day = now.getDay();
     const hour = now.getHours();
-    const diasPermitidos = [ 5];
+    const diasPermitidos = [ 4, 5, 6];
 
-    return diasPermitidos.includes(day) && hour >= 18 && hour < 22;
+    return diasPermitidos.includes(day) && hour >= 17 && hour < 22;
   };
 
   const [isOpenNow, setIsOpenNow] = useState(checkIsOpenNow());
@@ -169,7 +169,7 @@ export default function CardapioComponents() {
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
                   <p className="text-sm text-gray-200 mt-1">
-                    • Atendimento de sexta e sábado.
+                    • Atendimento de quinta , sexta e sábado.
                   </p>
                 </div>
 
@@ -212,7 +212,7 @@ export default function CardapioComponents() {
       <main className="max-w-5xl mx-auto py-8 px-4 flex flex-col items-center">
         <h1 className="text-3xl font-bold mb-6 text-[#a89050]">Cardápio</h1>
 
-        {["Pratos Quentes", "Pratos Crus", "Combos"].map((category) => (
+        {MENU_CATEGORIES.map((category) => (
           <section key={category} className="mb-10 w-full">
             <h2 className="text-2xl font-bold mb-4 text-[#a89050]">{category}</h2>
 
@@ -225,14 +225,14 @@ export default function CardapioComponents() {
                     product={product}
                     onAdd={(p) => {
                       if (!isOpenNow) {
-                        setError("📢 ⏰ Estamos fechados. Aberto de sexta e sábado, das 19h às 22h.");
+                        setError("📢 ⏰ Estamos fechados. Aberto de quinta sexta e sábado, das 19h às 22h.");
                         return;
                       }
                       addToCart(p);
                     }}
                     onOpenCombo={(combo) => {
                       if (!isOpenNow) {
-                        setError("⏰ Estamos fechados. Aberto de sexta a sábado, das 19h às 22h.");
+                        setError("⏰ Estamos fechados. Aberto de quinta, sexta e sábado, das 19h às 22h.");
                         return;
                       }
                       setSelectedCombo(combo);

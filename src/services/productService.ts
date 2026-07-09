@@ -1,9 +1,8 @@
-import { fetchWithAuth } from "./fetchWithAuth";
+import { apiRequest } from "@/core/http/api-client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+type MutationResult<T = unknown> = { message: string; data: T };
 
-// 🔹 Criar produto
-export async function createProduct(product: {
+export type ProductPayload = {
   name: string;
   description: string;
   price: number;
@@ -13,76 +12,25 @@ export async function createProduct(product: {
   isOutOfStock: boolean;
   isActive: boolean;
   categoryId: string;
-}) {
-  const response = await fetchWithAuth(`${API_URL}/api/Product`, {
+};
+
+export async function createProduct(product: ProductPayload): Promise<MutationResult> {
+  const data = await apiRequest<unknown>("/api/Product", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(product),
   });
-
-  const data = await response.json();
-
-  if (!response.ok || !data.success) {
-    console.error("❌ Erro ao criar produto:", data);
-    throw new Error(data.message || "Falha ao criar produto");
-  }
-
-  return data;
+  return { data, message: "Produto criado com sucesso!" };
 }
 
-// 🔹 Atualizar produto
-export async function updateProduct(
-  productId: string,
-  product: {
-    name: string;
-    description: string;
-    price: number;
-    imageUrl: string;
-    isOnSale: boolean;
-    salePercentage: number;
-    isOutOfStock: boolean;
-    isActive: boolean;
-    categoryId: string;
-  }
-) {
-  const response = await fetchWithAuth(
-    `${API_URL}/api/Product/${productId}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(product),
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok || !data.success) {
-    console.error("❌ Erro ao atualizar produto:", data);
-    throw new Error(data.message || "Falha ao atualizar produto");
-  }
-
-  return data;
+export async function updateProduct(productId: string, product: ProductPayload): Promise<MutationResult> {
+  const data = await apiRequest<unknown>(`/api/Product/${productId}`, {
+    method: "PATCH",
+    body: JSON.stringify(product),
+  });
+  return { data, message: "Produto atualizado com sucesso!" };
 }
 
-// 🔹 Deletar produto
-export async function deleteProduct(productId: string) {
-  const response = await fetchWithAuth(
-    `${API_URL}/api/Product/${productId}`,
-    {
-      method: "DELETE",
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok || !data.success) {
-    console.error("❌ Erro ao excluir produto:", data);
-    throw new Error(data.message || "Falha ao excluir produto");
-  }
-
-  return data;
+export async function deleteProduct(productId: string): Promise<MutationResult> {
+  const data = await apiRequest<unknown>(`/api/Product/${productId}`, { method: "DELETE" });
+  return { data, message: "Produto excluído com sucesso!" };
 }

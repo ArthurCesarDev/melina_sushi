@@ -69,6 +69,11 @@ export default function ProductCard({ product, onAdd, onOpenCombo }: Props) {
           fill
           className="object-cover transform group-hover:scale-105 transition-transform duration-300"
         />
+        {product.isNew && (
+          <span className="absolute left-3 top-3 rounded-full bg-[#FF5722] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-md">
+            Novidade
+          </span>
+        )}
       </div>
 
       {/* Conteúdo */}
