@@ -1,13 +1,10 @@
 "use client";
 import { useMemo } from "react";
+import { businessHoursSummary, isStoreOpenAt } from "@/config/businessHours";
 
 export default function Header() {
   const isOpen = useMemo(() => {
-    const now = new Date();
-    const day = now.getDay();
-    const hour = now.getHours();
-    const diasPermitidos = [4, 5, 6];
-    return diasPermitidos.includes(day) && hour >= 19 && hour < 22;
+    return isStoreOpenAt();
   }, []);
 
   return (
@@ -29,7 +26,7 @@ export default function Header() {
           ) : (
             <span className="text-red-600">🔴 Fechado</span>
           )}
-          <span className="text-gray-600 ml-2">• Das 18h às 22h</span>
+          <span className="text-gray-600 ml-2">• {businessHoursSummary}</span>
         </div>
       </div>
     </header>

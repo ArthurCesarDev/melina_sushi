@@ -13,6 +13,7 @@ import AuthModal from "@/components/UI/AuthModal";
 import { checkUserSession } from "@/services/authClient";
 import type { Product } from "@/types/Product";
 import { AnimatePresence, motion } from "framer-motion";
+import { businessHoursList, businessHoursSummary, isStoreOpenAt } from "@/config/businessHours";
 export default function CardapioComponents() {
   const { cart, addToCart, removeFromCart, decreaseFromCart, total } = useCart();
 
@@ -23,20 +24,11 @@ export default function CardapioComponents() {
   const [error, setError] = useState<string | null>(null);
 
 
-  const checkIsOpenNow = () => {
-    const now = new Date();
-    const day = now.getDay();
-    const hour = now.getHours();
-    const diasPermitidos = [ 4, 5, 6];
-
-    return diasPermitidos.includes(day) && hour >= 17 && hour < 22;
-  };
-
-  const [isOpenNow, setIsOpenNow] = useState(checkIsOpenNow());
+  const [isOpenNow, setIsOpenNow] = useState(isStoreOpenAt());
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsOpenNow(checkIsOpenNow());
+      setIsOpenNow(isStoreOpenAt());
     }, 60_000); // atualiza a cada 1 minuto
 
     return () => clearInterval(interval);
@@ -158,7 +150,7 @@ export default function CardapioComponents() {
                     )}
 
                     <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-200">
-                      🕒 19h às 22h
+                      🕒 Horários abaixo
                     </span>
                   </div>
                 </div>
@@ -168,9 +160,9 @@ export default function CardapioComponents() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full md:w-[420px]">
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
                   <p className="text-xs text-gray-400">Funcionamento</p>
-                  <p className="text-sm text-gray-200 mt-1">
-                    • Atendimento de quinta , sexta e sábado.
-                  </p>
+                  <ul className="mt-1 space-y-1 text-sm text-gray-200">
+                    {businessHoursList.map((hours) => <li key={hours}>• {hours}</li>)}
+                  </ul>
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
@@ -225,14 +217,14 @@ export default function CardapioComponents() {
                     product={product}
                     onAdd={(p) => {
                       if (!isOpenNow) {
-                        setError("📢 ⏰ Estamos fechados. Aberto de quinta sexta e sábado, das 19h às 22h.");
+                        setError(`📢 ⏰ Estamos fechados. Horários: ${businessHoursSummary}.`);
                         return;
                       }
                       addToCart(p);
                     }}
                     onOpenCombo={(combo) => {
                       if (!isOpenNow) {
-                        setError("⏰ Estamos fechados. Aberto de quinta, sexta e sábado, das 19h às 22h.");
+                        setError(`⏰ Estamos fechados. Horários: ${businessHoursSummary}.`);
                         return;
                       }
                       setSelectedCombo(combo);

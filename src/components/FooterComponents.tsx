@@ -1,3 +1,5 @@
+import { businessHoursSummary } from "@/config/businessHours";
+
 export default function Footer() {
   return (
     <footer className="w-full border-t border-white/10 bg-gradient-to-b from-[#0f0f0f] to-[#0a0a0a]">
@@ -28,7 +30,7 @@ export default function Footer() {
 
               <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-gray-200">
                 <span className="h-2 w-2 rounded-full bg-green-500" />
-                Atendimento: quinta, sexta e sábado
+                Atendimento: {businessHoursSummary}
               </span>
             </div>
 
