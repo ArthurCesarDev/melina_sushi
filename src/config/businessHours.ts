@@ -8,6 +8,13 @@ export const BUSINESS_HOURS = [
   { weekday: 6, label: "Sábado", isOpen: true, opensAt: "19:00", closesAt: "22:00" },
 ] as const;
 
+// Fechamentos excepcionais no formato AAAA-MM-DD (horário local).
+export const STORE_CLOSED_DATES = [
+  "2026-07-30",
+  "2026-07-31",
+  "2026-08-01",
+] as const;
+
 type BusinessDay = (typeof BUSINESS_HOURS)[number];
 
 function formatTime(time: string) {
@@ -22,6 +29,14 @@ export const businessHoursSummary = BUSINESS_HOURS.map(formatBusinessDay).join("
 export const businessHoursList = BUSINESS_HOURS.map(formatBusinessDay);
 
 export function isStoreOpenAt(date = new Date()) {
+  const localDate = [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+
+  if (STORE_CLOSED_DATES.some((closedDate) => closedDate === localDate)) return false;
+
   const schedule = BUSINESS_HOURS.find((day) => day.weekday === date.getDay());
   if (!schedule?.isOpen) return false;
 
