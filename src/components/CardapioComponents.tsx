@@ -13,7 +13,12 @@ import AuthModal from "@/components/UI/AuthModal";
 import { checkUserSession } from "@/services/authClient";
 import type { Product } from "@/types/Product";
 import { AnimatePresence, motion } from "framer-motion";
-import { businessHoursList, businessHoursSummary, isStoreOpenAt } from "@/config/businessHours";
+import {
+  businessHoursList,
+  businessHoursSummary,
+  getStoreClosureNotice,
+  isStoreOpenAt,
+} from "@/config/businessHours";
 export default function CardapioComponents() {
   const { cart, addToCart, removeFromCart, decreaseFromCart, total } = useCart();
 
@@ -25,6 +30,7 @@ export default function CardapioComponents() {
 
 
   const [isOpenNow, setIsOpenNow] = useState(isStoreOpenAt());
+  const closureNotice = getStoreClosureNotice();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -202,6 +208,15 @@ export default function CardapioComponents() {
 
       {/* CONTEÚDO */}
       <main className="max-w-5xl mx-auto py-8 px-4 flex flex-col items-center">
+        {closureNotice && (
+          <div
+            role="status"
+            className="mb-6 w-full rounded-2xl border border-amber-400/30 bg-amber-500/10 px-5 py-4 text-center text-sm font-medium text-amber-100 shadow-lg"
+          >
+            📢 {closureNotice}
+          </div>
+        )}
+
         <h1 className="text-3xl font-bold mb-6 text-[#a89050]">Cardápio</h1>
 
         {MENU_CATEGORIES.map((category) => (

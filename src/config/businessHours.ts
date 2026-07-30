@@ -15,7 +15,18 @@ export const STORE_CLOSED_DATES = [
   "2026-08-01",
 ] as const;
 
+export const SPECIAL_CLOSURE_NOTICE =
+  "Aviso: excepcionalmente, não funcionaremos neste fim de semana (30/07 a 01/08). Retornaremos na próxima quinta-feira.";
+
 type BusinessDay = (typeof BUSINESS_HOURS)[number];
+
+function formatLocalDate(date: Date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
 
 function formatTime(time: string) {
   return time.replace(":00", "h").replace(":", "h");
@@ -28,14 +39,14 @@ export function formatBusinessDay(day: BusinessDay) {
 export const businessHoursSummary = BUSINESS_HOURS.map(formatBusinessDay).join(" • ");
 export const businessHoursList = BUSINESS_HOURS.map(formatBusinessDay);
 
-export function isStoreOpenAt(date = new Date()) {
-  const localDate = [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, "0"),
-    String(date.getDate()).padStart(2, "0"),
-  ].join("-");
+export function getStoreClosureNotice(date = new Date()) {
+  return STORE_CLOSED_DATES.some((closedDate) => closedDate === formatLocalDate(date))
+    ? SPECIAL_CLOSURE_NOTICE
+    : null;
+}
 
-  if (STORE_CLOSED_DATES.some((closedDate) => closedDate === localDate)) return false;
+export function isStoreOpenAt(date = new Date()) {
+  if (getStoreClosureNotice(date)) return false;
 
   const schedule = BUSINESS_HOURS.find((day) => day.weekday === date.getDay());
   if (!schedule?.isOpen) return false;
