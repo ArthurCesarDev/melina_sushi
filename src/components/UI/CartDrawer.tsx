@@ -22,6 +22,11 @@ export default function CartDrawer({
   const [error, setError] = useState<string | null>(null);
 
   const handleConfirm = () => {
+    if (payment === "credito") {
+      setError("⚠️ Estamos com instabilidade na maquininha. Selecione PIX ou dinheiro.");
+      return;
+    }
+
     if (!address.trim()) {
       setError("🏠 Informe o endereço de entrega.");
       return;
@@ -204,6 +209,14 @@ export default function CartDrawer({
                       </button>
                     ))}
                   </div>
+                  {payment === "credito" && (
+                    <div
+                      role="alert"
+                      className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800"
+                    >
+                      ⚠️ Estamos com instabilidade na maquininha. Selecione PIX ou dinheiro.
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -224,11 +237,18 @@ export default function CartDrawer({
 
                 <motion.button
                   whileTap={{ scale: 0.97 }}
-                  className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-[#FF5722] to-[#FFC107] shadow-md hover:shadow-lg transition-all"
+                  className={`w-full py-3 rounded-xl font-semibold text-white shadow-md transition-all ${
+                    payment === "credito"
+                      ? "cursor-not-allowed bg-gray-400"
+                      : "bg-gradient-to-r from-[#FF5722] to-[#FFC107] hover:shadow-lg"
+                  }`}
                   onClick={handleConfirm}
                   type="button"
+                  disabled={payment === "credito"}
                 >
-                  Confirmar Pedido
+                  {payment === "credito"
+                    ? "⚠️ Selecione PIX ou Dinheiro"
+                    : "Confirmar Pedido"}
                 </motion.button>
               </div>
             )}
