@@ -5,8 +5,7 @@
 export const BUSINESS_HOURS = [
   { weekday: 3, label: "Quarta-feira", isOpen: true, opensAt: "19:00", closesAt: "22:00" },
   { weekday: 4, label: "Quinta-feira", isOpen: true, opensAt: "19:00", closesAt: "22:00" },
-  { weekday: 5, label: "Sexta-feira", isOpen: true, opensAt: "19:00", closesAt: "22:00" },
-  { weekday: 6, label: "Sábado", isOpen: true, opensAt: "19:00", closesAt: "22:00" },
+  { weekday: 5, label: "Sexta-feira", isOpen: true, opensAt: "18:00", closesAt: "21:00" },
 ] as const;
 
 // Fechamentos excepcionais no formato AAAA-MM-DD (horário local).
