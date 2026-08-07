@@ -1,5 +1,5 @@
 import { ApiError } from "./api-error";
-import { fetchWithAuth } from "@/services/fetchWithAuth";
+import { fetchWithAuth } from "@/core/http/authenticated-fetch";
 
 type ApiEnvelope<T> = {
   success: boolean;

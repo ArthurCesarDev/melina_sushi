@@ -7,8 +7,8 @@ import { CartProvider } from "@/context/CartContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ThemeProviderClient from "@/theme/ThemeProviderClient";
 import { ToastProvider } from "@/context/ToastContext";
-import ToastContainer from "@/components/ToastContainer";
-import Footer from "@/components/FooterComponents"; 
+import ToastContainer from "@/components/feedback/ToastContainer";
+import SiteFooter from "@/components/layout/SiteFooter";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const robotoMono = Roboto_Mono({ variable: "--font-roboto-mono", subsets: ["latin"] });
@@ -42,7 +42,7 @@ export default function RootLayout({
                 <main className="flex-1">{children}</main>
 
                 {/* FOOTER */}
-                <Footer />
+                <SiteFooter />
 
                 {/* TOAST */}
                 <ToastContainer />

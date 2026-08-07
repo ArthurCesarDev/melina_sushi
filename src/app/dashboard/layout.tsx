@@ -4,10 +4,10 @@
 import { useState, useEffect } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import Sidebar from '@/components/Sidebar';
-import Header from '@/components/HeaderComponents';
+import DashboardSidebar from '@/components/layout/DashboardSidebar';
+import DashboardHeader from '@/components/layout/DashboardHeader';
 import { useRouter } from 'next/navigation';
-import { checkAdminSession } from '@/services/authAdmin';
+import { checkAdminSession } from '@/features/auth/data/admin-auth-service';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
@@ -52,12 +52,12 @@ export default function CardapioLayout({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ display: 'flex' }}>
-        <Header
+        <DashboardHeader
           onMenuClick={() => setOpen(true)}
           leftOffset={leftOffset}
         />
 
-        <Sidebar
+        <DashboardSidebar
           open={isMobile ? open : true}
           onClose={() => setOpen(false)}
           variant={isMobile ? 'temporary' : 'permanent'}

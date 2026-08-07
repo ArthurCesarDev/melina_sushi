@@ -1,129 +1,69 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { uploadImage } from '@/core/files/image-upload-service';
 import {
-  getStoreProfile,
   createStoreProfile,
+  getStoreProfile,
   updateStoreProfile,
-  ApiResponse,
-} from '@/services/storeProfileService';
-
-const diasSemana = [
-  'Domingo',
-  'Segunda',
-  'Terça',
-  'Quarta',
-  'Quinta',
-  'Sexta',
-  'Sábado',
-];
-
-const horariosVazios = diasSemana.map((dia) => ({
-  dia,
-  ativo: false,
-  abertura: '',
-  fechamento: '',
-}));
+  type StoreProfileMutation,
+} from '@/features/store/data/store-profile-service';
+import {
+  createEmptyStoreProfile,
+  storeProfileFromDto,
+  storeProfileToDto,
+  type StoreProfileForm,
+} from '@/features/store/domain/store-profile';
 
 export function useStoreProfile() {
-  const [empresa, setEmpresa] = useState<any>({
-    nome: '',
-    descricao: '',
-    logo: '',
-    banner: '',
-    horarios: horariosVazios,
-  });
-
+  const [profile, setProfile] = useState<StoreProfileForm>(createEmptyStoreProfile);
   const [hasProfile, setHasProfile] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
+
     async function loadProfile() {
       try {
-        const response = await getStoreProfile();
+        const result = await getStoreProfile();
+        if (!active) return;
 
-        if (response?.data) {
-          setEmpresa(mapApiToState(response.data));
-          setHasProfile(true);
-        } else {
-          setEmpresa({
-            nome: '',
-            descricao: '',
-            logo: '',
-            banner: '',
-            horarios: horariosVazios,
-          });
-          setHasProfile(false);
-        }
+        setProfile(result ? storeProfileFromDto(result) : createEmptyStoreProfile());
+        setHasProfile(Boolean(result));
       } catch {
-        setEmpresa({
-          nome: '',
-          descricao: '',
-          logo: '',
-          banner: '',
-          horarios: horariosVazios,
-        });
+        if (!active) return;
+        setProfile(createEmptyStoreProfile());
         setHasProfile(false);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }
 
-    loadProfile();
+    void loadProfile();
+    return () => {
+      active = false;
+    };
   }, []);
-  async function save(): Promise<ApiResponse> {
-    const payload = mapStateToApi(empresa);
 
-    if (hasProfile) {
-      return await updateStoreProfile(payload);
-    } else {
-      const response = await createStoreProfile(payload);
-      setHasProfile(true);
-      return response;
+  const save = useCallback(async (): Promise<StoreProfileMutation> => {
+    const persistedProfile = { ...profile };
+
+    if (profile.logoFile) {
+      persistedProfile.logoUrl = await uploadImage('logo', profile.logoFile, profile.logoUrl);
     }
-  }
+    if (profile.bannerFile) {
+      persistedProfile.bannerUrl = await uploadImage('banner', profile.bannerFile, profile.bannerUrl);
+    }
 
-  return {
-    empresa,
-    setEmpresa,
-    hasProfile,
-    loading,
-    save,
-  };
-}
+    const payload = storeProfileToDto(persistedProfile);
+    const result = hasProfile
+      ? await updateStoreProfile(payload)
+      : await createStoreProfile(payload);
 
-function mapStateToApi(empresa: any) {
-  return {
-    name: empresa.nome,
-    description: empresa.descricao,
-    profileImageUrl: empresa.logo,
-    coverImageUrl: empresa.banner,
-    workingHours: empresa.horarios.map((h: any, index: number) => ({
-      dayOfWeek: index,
-      openTime: h.ativo ? h.abertura : null,
-      closeTime: h.ativo ? h.fechamento : null,
-      isClosed: !h.ativo,
-    })),
-  };
-}
+    setHasProfile(true);
+    setProfile(storeProfileFromDto(payload));
+    return result;
+  }, [hasProfile, profile]);
 
-function mapApiToState(profile: any) {
-  return {
-    nome: profile.name ?? '',
-    descricao: profile.description ?? '',
-    logo: profile.profileImageUrl ?? '',
-    banner: profile.coverImageUrl ?? '',
-    horarios: diasSemana.map((dia, index) => {
-      const apiDay = profile.workingHours?.find(
-        (h: any) => h.dayOfWeek === index
-      );
-
-      return {
-        dia,
-        ativo: apiDay ? !apiDay.isClosed : false,
-        abertura: apiDay?.openTime ?? '',
-        fechamento: apiDay?.closeTime ?? '',
-      };
-    }),
-  };
+  return { profile, setProfile, hasProfile, loading, save };
 }

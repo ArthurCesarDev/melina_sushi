@@ -11,21 +11,23 @@ import {
 } from '@mui/material';
 import { Edit, Trash2, PlusCircle, ArrowLeft } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { getCategoryById } from '@/services/categoryService';
-import { deleteProduct } from '@/services/productService';
+import { getCategoryById } from '@/features/catalog/data/category-service';
+import { deleteProduct } from '@/features/catalog/data/product-service';
+import type { CatalogProduct, Category } from '@/features/catalog/domain/catalog';
 import { useToast } from '@/context/ToastContext';
-import ProductForm from '@/components/AdminProductForm';
-import DeleteConfirmModal from '@/components/UI/DeleteConfirmModal';
+import ProductForm from '@/features/catalog/presentation/ProductForm';
+import DeleteConfirmDialog from '@/components/dialogs/DeleteConfirmDialog';
+import { getErrorMessage } from '@/core/errors/get-error-message';
 
 export default function CategoriaPage() {
   const { id } = useParams() as Record<string, string>;
   const router = useRouter();
   const { showToast } = useToast();
 
-  const [category, setCategory] = useState<any | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
   const [showProductForm, setShowProductForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [editingProduct, setEditingProduct] = useState<CatalogProduct | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openDelete, setOpenDelete] = useState(false);
 
@@ -34,9 +36,8 @@ export default function CategoriaPage() {
       setLoading(true);
       const data = await getCategoryById(id as string);
       setCategory(data);
-    } catch (err: any) {
-      console.error('Erro ao buscar categoria:', err);
-      showToast(err.message || 'Erro ao carregar categoria', 'error');
+    } catch (error: unknown) {
+      showToast(getErrorMessage(error, 'Erro ao carregar categoria'), 'error');
     } finally {
       setLoading(false);
     }
@@ -108,7 +109,7 @@ export default function CategoriaPage() {
         </Typography>
       )}
 
-      {produtos.map((p: any) => (
+      {produtos.map((p) => (
         <Paper
           key={p.id}
           sx={{
@@ -196,7 +197,7 @@ export default function CategoriaPage() {
       {showProductForm && (
         <ProductForm
           categoryId={id as string}
-          produto={editingProduct}
+          product={editingProduct}
           onClose={() => {
             setShowProductForm(false);
             setEditingProduct(null);
@@ -204,7 +205,7 @@ export default function CategoriaPage() {
           onSuccess={fetchCategory}
         />
       )}
-      <DeleteConfirmModal
+      <DeleteConfirmDialog
         open={openDelete}
         onClose={() => setOpenDelete(false)}
         onConfirm={async () => {
@@ -213,9 +214,8 @@ export default function CategoriaPage() {
             const result = await deleteProduct(deleteId);
             showToast(result.message || 'Produto excluído com sucesso!', 'success');
             await fetchCategory(); 
-          } catch (err: any) {
-            console.error('Erro ao excluir produto:', err);
-            showToast(err.message || 'Erro ao excluir produto', 'error');
+          } catch (error: unknown) {
+            showToast(getErrorMessage(error, 'Erro ao excluir produto'), 'error');
           } finally {
             setDeleteId(null);
           }

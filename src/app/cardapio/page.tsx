@@ -1,7 +1,7 @@
 // cardapio/page.tsx
 "use client";
-import CardapioComponents from "@/components/CardapioComponents";
+import MenuScreen from "@/features/menu/presentation/MenuScreen";
 
 export default function CardapioPage() {
-  return <CardapioComponents />;
+  return <MenuScreen />;
 }

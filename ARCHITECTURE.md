@@ -1,32 +1,40 @@
 # Arquitetura
 
-O projeto segue um **monólito modular** para Next.js App Router. A organização evita acoplamento entre tela, regra de negócio e infraestrutura, sem exigir uma migração de uma vez.
+O projeto usa um monólito modular com Next.js App Router. A estrutura separa regras de negócio, integração HTTP e componentes de interface.
 
-```
+```text
 src/
-  app/          # rotas, layouts e composição de página
-  features/     # domínio e casos de uso por capacidade de negócio
-  core/         # infraestrutura compartilhada (HTTP, erros, configurações)
-  components/   # UI reutilizável enquanto a migração para features é gradual
+  app/                  rotas, layouts e composição de páginas
+  features/
+    auth/               autenticação administrativa e do cliente
+    cart/               regras e interface do carrinho
+    catalog/            categorias e produtos administrativos
+    menu/               cardápio público
+    store/              perfil e horários da loja
+  core/                 HTTP, upload e tratamento de erros compartilhados
+  components/
+    layout/             estrutura visual compartilhada
+    feedback/           notificações
+    ui/                 diálogos genéricos
+  context/              providers globais do React
+  config/               configuração estática do negócio
 ```
 
 ## Regras de dependência
 
-- `app` pode depender de `features` e `components`.
-- `features` contém tipos e regras puras; não depende de React, Next ou HTTP.
-- `core` encapsula detalhes técnicos compartilhados.
-- Componentes não conhecem `fetch` nem a URL da API: chamam serviços/casos de uso tipados.
+- `app` compõe telas e depende de `features` e componentes compartilhados.
+- Cada feature divide código em `domain`, `data` e `presentation` quando essas camadas são necessárias.
+- `domain` contém somente tipos e regras puras; não depende de React, Next.js ou HTTP.
+- `data` traduz chamadas externas para contratos do domínio.
+- `presentation` trata estado e interação visual, delegando persistência aos serviços.
+- `core` não depende de features ou componentes.
+- Componentes compartilhados não fazem chamadas HTTP.
 
-## Aplicado nesta etapa
+## Convenções
 
-- `features/menu/domain`: contrato de produto do cardápio.
-- `features/cart/domain`: reducer e cálculo de total puros, com uma única fonte de verdade no `CartProvider`.
-- `core/http`: cliente de API e erro padronizado.
-- Serviços de produto e categoria usam o cliente HTTP compartilhado e payloads explícitos.
-
-## Próximas migrações recomendadas
-
-1. Mover `CardapioComponents` e seus componentes para `features/menu/presentation` e separar montagem de pedido (WhatsApp) em um caso de uso.
-2. Substituir `any` em perfil da loja e formulários por DTOs e validação de entrada (por exemplo, Zod).
-3. Consolidar `authClient`, `authAdmin` e `logoutService` em `features/auth`, com um contrato de sessão por papel.
-4. Adicionar testes unitários aos módulos puros de `features/cart/domain` e testes de integração aos serviços HTTP.
+- Não usar `any`; erros capturados começam como `unknown`.
+- Não duplicar componentes dentro de rotas. Componentes exclusivos de um domínio pertencem à feature correspondente.
+- Páginas devem ser pequenas e responsáveis principalmente por composição.
+- Toda chamada autenticada passa por `core/http`.
+- Uploads de imagem passam por `core/files/image-upload-service`.
+- Antes de entregar alterações, executar `npm run typecheck` e `npm run build`.
